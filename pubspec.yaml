@@ -1,0 +1,51 @@
+name: bin_ali_data
+description: "A new Flutter project."
+
+publish_to: 'none'
+version: 1.0.0+4
+
+environment:
+  sdk: '>=3.8.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  share_plus: ^7.1.0
+  flutter_svg: ^2.2.0
+  font_awesome_flutter: ^10.5.0
+  intl: ^0.18.1
+  http: ^1.2.1
+  shared_preferences: ^2.5.3
+  change_app_package_name: ^1.4.0
+
+
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.2
+  local_auth: ^2.2.0
+  image_picker: ^1.1.2
+  path_provider: ^2.1.5
+  audioplayers: ^6.5.0
+  screenshot: ^3.0.0
+  connectivity_plus: ^6.1.5
+  marquee: ^2.2.3
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/images/plus.svg
+    - assets/audios/sucess.mpeg
+    - assets/audios/sucess.mp3
+    - assets/images/red-alert-icon.png
+    - assets/images/success_icon.png
+
+

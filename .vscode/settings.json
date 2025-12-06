@@ -1,0 +1,12 @@
+{
+
+    "yaml.schemas": {
+
+        "https://json.schemastore.org/pubspec.json": "pubspec.yaml"
+
+    },
+    "files.exclude": {
+        "**/.git": false
+    }
+
+}

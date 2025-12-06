@@ -1,0 +1,146 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+import './pages/splash_page.dart';
+import './pages/dashboard_page.dart';
+import './pages/pin_login_page.dart';
+import './pages/login_page.dart';
+import './pages/airtime_page.dart';
+import './pages/wallet_page.dart';
+import './pages/account_page.dart';
+import './pages/welcome_page.dart';
+import './pages/onboarding_page.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+// Wrapper that forces the back button to exit the app when showing an
+// unlock/lock screen. This prevents dismissing the welcome/pin screen
+// by pressing the back button; instead the app will close.
+class _LockScreenWrapper extends StatelessWidget {
+  final Widget child;
+
+  const _LockScreenWrapper({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        // Close the app when the user attempts to pop the lock screen.
+        SystemNavigator.pop();
+        return false;
+      },
+      child: child,
+    );
+  }
+}
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final GlobalKey<NavigatorState> _navKey = GlobalKey<NavigatorState>();
+  bool _requirePinOnResume = false;
+  DateTime? _pausedTime;
+  final Duration _lockDelay = const Duration(seconds: 30);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      // Store the time when the app was paused
+      _pausedTime = DateTime.now();
+    } else if (state == AppLifecycleState.detached) {
+      // For detached state, always require PIN
+      _requirePinOnResume = true;
+      _pausedTime = null;
+    } else if (state == AppLifecycleState.resumed) {
+      if (_pausedTime != null) {
+        // Check if more than 30 seconds have passed
+        final timeDifference = DateTime.now().difference(_pausedTime!);
+        if (timeDifference >= _lockDelay) {
+          _requirePinOnResume = true;
+        }
+      }
+
+      if (_requirePinOnResume) {
+        _requirePinOnResume = false;
+        _pausedTime = null;
+        // On resume, route depending on login state: welcome (if logged in) or login (if not)
+        // Delay the navigation slightly so it doesn't run while the Navigator
+        // is rebuilding or locked by the framework.
+        Future.delayed(const Duration(milliseconds: 200), () async {
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            final loggedIn = prefs.getString('user_data') != null;
+            final nav = _navKey.currentState;
+            if (nav != null && nav.mounted) {
+              if (!loggedIn) {
+                // If not logged in, send user to login and clear stack.
+                nav.pushNamedAndRemoveUntil('/login', (route) => false);
+              } else {
+                // If logged in, present the WelcomePage modally so the user
+                // unlocks and returns to the exact page they left after entering PIN.
+                nav.push(
+                  MaterialPageRoute(
+                    builder: (_) => _LockScreenWrapper(
+                      child: const WelcomePage(restorePrevious: true),
+                    ),
+                    fullscreenDialog: true,
+                  ),
+                );
+              }
+            }
+          } catch (e) {
+            final nav = _navKey.currentState;
+            if (nav != null && nav.mounted) {
+              nav.pushNamedAndRemoveUntil('/login', (route) => false);
+            }
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      navigatorKey: _navKey,
+      title: 'BDU DATA',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashPage(),
+        '/dashboard': (context) => const DashboardPage(),
+        '/pin-login': (context) => const PinLoginPage(),
+        '/login': (context) => const LoginPage(),
+        '/airtime': (context) => const AirtimePage(),
+        '/wallet': (context) => const WalletPage(),
+        '/account': (context) => const AccountPage(),
+        '/welcome': (context) => const WelcomePage(),
+        '/onboarding': (context) => const OnboardingPage(),
+      },
+    );
+  }
+}
