@@ -246,7 +246,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: const Text(
           'Transaction History',
@@ -275,13 +275,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 children: [
                   Text(
                     'Loading transactions...',
-                    style: TextStyle(color: Color(0xFF0A2463)),
+                    style: TextStyle(color: Color(0xFFce4323)),
                   ),
                   SizedBox(width: 12),
                   SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(color: Color(0xFF0A2463)),
+                    child: CircularProgressIndicator(color: Color(0xFFce4323)),
                   ),
                 ],
               ),
@@ -310,7 +310,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   ElevatedButton(
                     onPressed: _loadTransactions,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                     ),
                     child: const Text('Retry'),
                   ),
@@ -340,7 +340,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
               ),
             )
           : RefreshIndicator(
-              color: const Color(0xFF0A2463),
+              color: const Color(0xFFce4323),
               backgroundColor: Colors.white,
               onRefresh: () => _loadTransactions(refresh: true),
               child: ListView.builder(
@@ -364,14 +364,14 @@ class _TransactionsPageState extends State<TransactionsPage> {
                               children: const [
                                 Text(
                                   'Loading more...',
-                                  style: TextStyle(color: Color(0xFF0A2463)),
+                                  style: TextStyle(color: Color(0xFFce4323)),
                                 ),
                                 SizedBox(width: 12),
                                 SizedBox(
                                   width: 20,
                                   height: 20,
                                   child: CircularProgressIndicator(
-                                    color: Color(0xFF0A2463),
+                                    color: Color(0xFFce4323),
                                   ),
                                 ),
                               ],
@@ -380,7 +380,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                               onPressed: _loadMoreTransactions,
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
-                                  color: Color(0xFF0A2463),
+                                  color: Color(0xFFce4323),
                                   width: 1.5,
                                 ),
                                 shape: RoundedRectangleBorder(
@@ -389,7 +389,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                               ),
                               child: const Text(
                                 'Load More',
-                                style: TextStyle(color: Color(0xFF0A2463)),
+                                style: TextStyle(color: Color(0xFFce4323)),
                               ),
                             ),
                     ),
@@ -500,10 +500,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0A2463).withOpacity(0.08),
+                      color: const Color(0xFFce4323).withOpacity(0.08),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(icon, color: const Color(0xFF0A2463), size: 22),
+                    child: Icon(icon, color: const Color(0xFFce4323), size: 22),
                   ),
                   const SizedBox(width: 14),
                   // Transaction details
@@ -543,7 +543,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                 if (isAdminCredit) ...[
                                   const SizedBox(height: 3),
                                   Text(
-                                    'By Admin bdudata',
+                                    'By Admin mkdata',
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w400,
@@ -577,7 +577,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0A2463),
+                          color: Color(0xFFce4323),
                         ),
                       ),
                       const SizedBox(height: 6),

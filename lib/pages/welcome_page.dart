@@ -285,9 +285,15 @@ class _WelcomePageState extends State<WelcomePage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFf05533),
+              Color(0xFFce4323),
+              Color(0xFF9d2e1a),
+              Color(0xFF6b1f0f),
+            ],
+            stops: [0.0, 0.3, 0.6, 1.0],
           ),
         ),
         child: Center(
@@ -349,7 +355,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     style: TextStyle(
                       fontSize: getResponsiveSize(context, 28),
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF0A2463),
+                      color: const Color(0xFFce4323),
                     ),
                   ),
                   SizedBox(height: getResponsiveSize(context, 8)),
@@ -441,7 +447,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               _showPassword
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: const Color(0xFF0A2463),
+                              color: const Color(0xFFce4323),
                               size: getResponsiveSize(context, 20),
                             ),
                           ),
@@ -474,7 +480,7 @@ class _WelcomePageState extends State<WelcomePage> {
                           ? _verifyPin
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         disabledBackgroundColor: Colors.grey.shade300,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(

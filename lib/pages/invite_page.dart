@@ -96,7 +96,7 @@ class _InvitePageState extends State<InvitePage> {
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF0A2463),
+                  color: Color(0xFFce4323),
                 ),
               ),
               const SizedBox(height: 20),
@@ -127,7 +127,7 @@ class _InvitePageState extends State<InvitePage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                       width: 2,
                     ),
                   ),
@@ -168,7 +168,7 @@ class _InvitePageState extends State<InvitePage> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -201,7 +201,7 @@ class _InvitePageState extends State<InvitePage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                     ),
                   ),
                 ),
@@ -265,7 +265,7 @@ class _InvitePageState extends State<InvitePage> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0A2463),
+                  color: const Color(0xFFce4323),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -375,7 +375,7 @@ class _InvitePageState extends State<InvitePage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                       width: 2,
                     ),
                   ),
@@ -403,7 +403,7 @@ class _InvitePageState extends State<InvitePage> {
                     _showWithdrawModal();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),

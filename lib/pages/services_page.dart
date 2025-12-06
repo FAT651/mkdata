@@ -73,7 +73,7 @@ class ServicesPage extends StatelessWidget {
                     context,
                     'Data',
                     Icons.wifi,
-                    Colors.blue,
+                    const Color(0xFFce4323),
                     () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const DataPage()),
@@ -175,7 +175,7 @@ class ServicesPage extends StatelessWidget {
                     context,
                     'Website',
                     Icons.language,
-                    Colors.blue,
+                    const Color(0xFFce4323),
                     () => _launchURL('https://binalionedata.com.ng/'),
                   ),
                   _buildServiceCard(
@@ -246,7 +246,7 @@ class ServicesPage extends StatelessWidget {
                     context,
                     'Market Signals',
                     Icons.trending_up,
-                    Colors.blue,
+                    const Color(0xFFce4323),
                     () {
                       // TODO: Implement Market Signals service
                       ScaffoldMessenger.of(context).showSnackBar(

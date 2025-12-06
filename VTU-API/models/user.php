@@ -195,8 +195,8 @@ class User
             // Generate unique references for both accounts
             $timestamp = time();
             $randomStr = bin2hex(random_bytes(4));
-            $palmpayRef = "BDU" . $id . $timestamp . $randomStr;
-            $pagaRef = "BDU" . $id . ($timestamp + 1) . bin2hex(random_bytes(4));
+            $palmpayRef = "MK" . $id . $timestamp . $randomStr;
+            $pagaRef = "MK" . $id . ($timestamp + 1) . bin2hex(random_bytes(4));
             error_log("Generated references - Palmpay: " . $palmpayRef . ", Paga: " . $pagaRef);
             
             // Create Palmpay account

@@ -123,10 +123,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: _navKey,
-      title: 'BDU DATA',
+      title: 'MK DATA',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.red,
         scaffoldBackgroundColor: Colors.white,
       ),
       initialRoute: '/',

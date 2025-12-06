@@ -132,7 +132,7 @@ class _ChangeTransactionPinPageState extends State<ChangeTransactionPinPage> {
               width: double.infinity,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+                  colors: [Color(0xFFce4323), Color(0xFFce4323)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),

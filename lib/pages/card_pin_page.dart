@@ -240,7 +240,7 @@ class _CardPinPageState extends State<CardPinPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: index < pinInput.length
-                                ? const Color(0xFF0A2463)
+                                ? const Color(0xFFce4323)
                                 : Colors.grey.shade300,
                           ),
                         ),
@@ -321,7 +321,7 @@ class _CardPinPageState extends State<CardPinPage> {
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                       disabledBackgroundColor: Colors.grey.shade400,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -391,7 +391,7 @@ class _CardPinPageState extends State<CardPinPage> {
           ),
           child: const Icon(
             Icons.fingerprint,
-            color: Color(0xFF0A2463),
+            color: Color(0xFFce4323),
             size: 24,
           ),
         ),
@@ -440,7 +440,7 @@ class _CardPinPageState extends State<CardPinPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: const Text(
           'Recharge Card',
@@ -560,7 +560,7 @@ class _CardPinPageState extends State<CardPinPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -595,7 +595,7 @@ class _CardPinPageState extends State<CardPinPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -617,7 +617,7 @@ class _CardPinPageState extends State<CardPinPage> {
                       ? null
                       : _handlePurchase,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     disabledBackgroundColor: Colors.grey.shade400,
                     elevation: 2,
                     shape: RoundedRectangleBorder(

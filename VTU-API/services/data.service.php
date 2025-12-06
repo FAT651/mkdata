@@ -436,7 +436,7 @@ public function purchaseData($networkId, $phoneNumber, $planCode, $userId) {
             'status' => $status === 0 ? 'success' : ($status === 2 ? 'processing' : 'failed'),
             'message' => $message,
             'data' => [
-                'transactionId' => 'BDU_' . strtoupper(uniqid()),
+                'transactionId' => 'MK_' . strtoupper(uniqid()),
                 'reference' => $reference,
                 'amount' => $planPrice,
                 'phone' => $phoneNumber,
@@ -458,7 +458,7 @@ public function purchaseData($networkId, $phoneNumber, $planCode, $userId) {
             'status' => 'failed',
             'message' => $e->getMessage(),
             'data' => [
-                'transactionId' => 'BDU_' . strtoupper(uniqid()),
+                'transactionId' => 'MK_' . strtoupper(uniqid()),
                 'reference' => $reference ?? null,
                 'amount' => $planPrice ?? null,
                 'phone' => $phoneNumber,

@@ -177,7 +177,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: Text(
           _getTransactionTitle(),
@@ -315,7 +315,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
           style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF0A2463),
+            color: Color(0xFFce4323),
           ),
         ),
 
@@ -453,7 +453,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               child: OutlinedButton(
                 onPressed: _captureAndSharePng,
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF0A2463), width: 1.5),
+                  side: const BorderSide(color: Color(0xFFce4323), width: 1.5),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -462,12 +462,12 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.share, color: Color(0xFF0A2463), size: 20),
+                    Icon(Icons.share, color: Color(0xFFce4323), size: 20),
                     SizedBox(width: 8),
                     Text(
                       'Share',
                       style: TextStyle(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -484,7 +484,7 @@ class _TransactionDetailsPageState extends State<TransactionDetailsPage> {
               child: ElevatedButton(
                 onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0A2463),
+                  backgroundColor: const Color(0xFFce4323),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),

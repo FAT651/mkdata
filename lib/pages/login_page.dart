@@ -219,7 +219,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Color(0xFF0A2463),
+        statusBarColor: Color(0xFFce4323),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
       ),
@@ -242,8 +242,8 @@ class _LoginPageState extends State<LoginPage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF0A2463),
-                        const Color(0xFF247BA0),
+                        const Color(0xFFce4323),
+                        const Color(0xFFce4323),
                       ],
                     ),
                   ),
@@ -348,7 +348,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: const Text(
                               'Forgot Password?',
                               style: TextStyle(
-                                color: Color(0xFF0A2463),
+                                color: Color(0xFFce4323),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
                               ),
@@ -392,7 +392,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleLogin,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0A2463),
+                              backgroundColor: const Color(0xFFce4323),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -442,7 +442,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: const Text(
                                 'Sign Up',
                                 style: TextStyle(
-                                  color: Color(0xFF0A2463),
+                                  color: Color(0xFFce4323),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),

@@ -148,65 +148,140 @@ class _DashboardPageState extends State<DashboardPage> {
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
+          elevation: 8,
           child: Container(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(getResponsiveSize(context, 28)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Close button
+                // Close button in top right
                 Align(
                   alignment: Alignment.topRight,
                   child: GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
-                    child: const Icon(Icons.close, size: 24),
+                    child: Container(
+                      width: getResponsiveSize(context, 36),
+                      height: getResponsiveSize(context, 36),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        size: getResponsiveSize(context, 20),
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                // Alert Notification title
-                const Text(
-                  'Alert Notification',
+                SizedBox(height: getResponsiveSize(context, 16)),
+
+                // Icon at top
+                Container(
+                  width: getResponsiveSize(context, 70),
+                  height: getResponsiveSize(context, 70),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFf05533),
+                        Color(0xFFce4323),
+                        Color(0xFF9d2e1a),
+                        Color(0xFF6b1f0f),
+                      ],
+                      stops: [0.0, 0.3, 0.6, 1.0],
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.notifications_active,
+                    color: Colors.white,
+                    size: getResponsiveSize(context, 40),
+                  ),
+                ),
+                SizedBox(height: getResponsiveSize(context, 20)),
+
+                // Title
+                Text(
+                  'Welcome!',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    fontSize: getResponsiveSize(context, 20),
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 16),
-                // Message
+                SizedBox(height: getResponsiveSize(context, 12)),
+
+                // Message with better formatting
                 RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
                         text:
-                            'Dear   ${_userData?['sFname']?.toString() ?? 'User'}\n\n',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
+                            'Dear ${_userData?['sFname']?.toString() ?? 'User'},\n\n',
+                        style: TextStyle(
+                          fontSize: getResponsiveSize(context, 14),
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          height: 1.5,
                         ),
                       ),
-                      // TextSpan(
-                      //   text: _userData?['sFname']?.toString() ?? 'User',
-                      //   style: const TextStyle(
-                      //     fontSize: 14,
-                      //     color: Colors.black,
-                      //   ),
-                      // ),
-                      const TextSpan(
+                      TextSpan(
                         text:
-                            '\n\nWelcome to BDU DATA the best 👍 platform for automated VTU services',
+                            'Welcome to MK DATA, the best 👍 platform for automated VTU services.\n\n',
                         style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.black,
+                          fontSize: getResponsiveSize(context, 13),
+                          color: Colors.grey.shade700,
+                          height: 1.6,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            'Enjoy seamless transactions and exceptional service!',
+                        style: TextStyle(
+                          fontSize: getResponsiveSize(context, 12),
+                          color: Colors.grey.shade600,
                           height: 1.5,
+                          fontStyle: FontStyle.italic,
                         ),
                       ),
                     ],
                   ),
                   textAlign: TextAlign.center,
+                ),
+                SizedBox(height: getResponsiveSize(context, 24)),
+
+                // Action button
+                SizedBox(
+                  width: double.infinity,
+                  height: getResponsiveSize(context, 48),
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFce4323),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                    ),
+                    child: Text(
+                      'Got it!',
+                      style: TextStyle(
+                        fontSize: getResponsiveSize(context, 16),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -837,7 +912,13 @@ class _DashboardPageState extends State<DashboardPage> {
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+                    colors: [
+                      Color(0xFFf05533),
+                      Color(0xFFce4323),
+                      Color(0xFF9d2e1a),
+                      Color(0xFF6b1f0f),
+                    ],
+                    stops: [0.0, 0.3, 0.6, 1.0],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -860,7 +941,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     child: Padding(
                       padding: EdgeInsets.all(getResponsiveSize(context, 16)),
                       child: Icon(
-                        _expandFloatingMenu ? Icons.close : Icons.menu,
+                        _expandFloatingMenu ? Icons.close : Icons.headset_mic,
                         color: Colors.white,
                         size: getResponsiveSize(context, 28),
                       ),
@@ -875,7 +956,22 @@ class _DashboardPageState extends State<DashboardPage> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(getResponsiveSize(context, 56)),
           child: AppBar(
-            backgroundColor: const Color(0xFF0A2463),
+            backgroundColor: Color(0xFFce4323),
+            flexibleSpace: const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFf05533),
+                    Color(0xFFce4323),
+                    Color(0xFF9d2e1a),
+                    Color(0xFF6b1f0f),
+                  ],
+                  stops: [0.0, 0.3, 0.6, 1.0],
+                ),
+              ),
+            ),
             elevation: 0,
             automaticallyImplyLeading: false,
             title: Row(
@@ -980,7 +1076,13 @@ class _DashboardPageState extends State<DashboardPage> {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+                      colors: [
+                        Color(0xFFf05533),
+                        Color(0xFFce4323),
+                        Color(0xFF9d2e1a),
+                        Color(0xFF6b1f0f),
+                      ],
+                      stops: [0.0, 0.3, 0.6, 1.0],
                     ),
                   ),
                   padding: EdgeInsets.fromLTRB(
@@ -1112,7 +1214,13 @@ class _DashboardPageState extends State<DashboardPage> {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+                        colors: [
+                          Color(0xFFf05533),
+                          Color(0xFFce4323),
+                          Color(0xFF9d2e1a),
+                          Color(0xFF6b1f0f),
+                        ],
+                        stops: [0.0, 0.3, 0.6, 1.0],
                       ),
                     ),
                   ),
@@ -1186,7 +1294,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0A2463),
+                              backgroundColor: const Color(0xFFce4323),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -1198,7 +1306,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       // Fund Wallet and History buttons
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0A2463),
+                          color: const Color(0xFFce4323),
                           borderRadius: BorderRadius.circular(
                             getResponsiveSize(context, 12),
                           ),
@@ -1325,50 +1433,50 @@ class _DashboardPageState extends State<DashboardPage> {
                         children: [
                           _buildFeatureButton(
                             'Data Bundle',
-                            Icons.wifi,
-                            const Color(0xFF0A5ED7),
+                            Icons.signal_cellular_alt,
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const DataPage()),
                           ),
                           _buildFeatureButton(
                             'Airtime',
-                            Icons.phone_android,
-                            const Color(0xFF0A5ED7),
+                            Icons.phone_iphone,
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const AirtimePage()),
                           ),
                           _buildFeatureButton(
                             'Electricity',
-                            Icons.flash_on,
-                            const Color(0xFF0A5ED7),
+                            Icons.bolt,
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const ElectricityPage()),
                           ),
                           _buildFeatureButton(
                             'Refer & Earn',
                             Icons.card_giftcard,
-                            const Color(0xFF0A5ED7),
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const InvitePage()),
                           ),
                           _buildFeatureButton(
                             'Cable',
-                            Icons.tv,
-                            const Color(0xFF0A5ED7),
+                            Icons.live_tv,
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const CablePage()),
                           ),
                           _buildFeatureButton(
                             'Exam',
-                            Icons.school,
-                            const Color(0xFF0A5ED7),
+                            Icons.assignment,
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const ExamPinPage()),
                           ),
                           _buildFeatureButton(
                             'Data Card',
-                            Icons.card_travel,
-                            const Color(0xFF0A5ED7),
+                            Icons.credit_card,
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const DatapinPage()),
                           ),
                           _buildFeatureButton(
                             'Recharge Card',
-                            Icons.shopping_cart,
-                            const Color(0xFF0A5ED7),
+                            Icons.card_membership,
+                            const Color(0xFFce4323),
                             () => _pushAndRefresh(const CardPinPage()),
                           ),
                         ],
@@ -1682,7 +1790,7 @@ class _DashboardPageState extends State<DashboardPage> {
               elevation: 0,
               showSelectedLabels: true,
               showUnselectedLabels: true,
-              selectedItemColor: const Color(0xFF0A2463),
+              selectedItemColor: const Color(0xFFce4323),
               unselectedItemColor: Colors.grey.shade500,
               selectedFontSize: getResponsiveSize(context, 11),
               unselectedFontSize: getResponsiveSize(context, 11),
@@ -1729,19 +1837,19 @@ class _DashboardPageState extends State<DashboardPage> {
           borderRadius: BorderRadius.circular(getResponsiveSize(context, 12)),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF247BA0).withOpacity(0.15),
+              color: const Color(0xFFce4323).withOpacity(0.15),
               blurRadius: 20,
               offset: const Offset(0, 8),
               spreadRadius: 4,
             ),
             BoxShadow(
-              color: const Color(0xFF247BA0).withOpacity(0.10),
+              color: const Color(0xFFce4323).withOpacity(0.10),
               blurRadius: 12,
               offset: const Offset(0, 4),
               spreadRadius: 2,
             ),
             BoxShadow(
-              color: const Color(0xFF247BA0).withOpacity(0.05),
+              color: const Color(0xFFce4323).withOpacity(0.05),
               blurRadius: 6,
               offset: const Offset(0, 2),
               spreadRadius: 1,

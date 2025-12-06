@@ -214,7 +214,7 @@ class _CablePageState extends State<CablePage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: index < pinInput.length
-                                ? const Color(0xFF0A2463)
+                                ? const Color(0xFFce4323)
                                 : Colors.grey.shade300,
                           ),
                         ),
@@ -312,7 +312,7 @@ class _CablePageState extends State<CablePage> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         disabledBackgroundColor: Colors.grey.shade300,
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -369,7 +369,7 @@ class _CablePageState extends State<CablePage> {
           child: isBiometric
               ? const Icon(
                   Icons.fingerprint,
-                  color: Color(0xFF0A2463),
+                  color: Color(0xFFce4323),
                   size: 18,
                 )
               : Text(
@@ -439,7 +439,7 @@ class _CablePageState extends State<CablePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: const Text(
           'Cable',
@@ -526,12 +526,14 @@ class _CablePageState extends State<CablePage> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: isSelected
-                              ? const Color(0xFF0A2463)
+                              ? const Color(0xFFce4323)
                               : Colors.grey.shade300,
                           width: isSelected ? 2 : 1.5,
                         ),
                         borderRadius: BorderRadius.circular(12),
-                        color: isSelected ? Colors.blue.shade50 : Colors.white,
+                        color: isSelected
+                            ? const Color(0xFFce4323).withOpacity(0.1)
+                            : Colors.white,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -565,7 +567,7 @@ class _CablePageState extends State<CablePage> {
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                               color: isSelected
-                                  ? const Color(0xFF0A2463)
+                                  ? const Color(0xFFce4323)
                                   : Colors.black,
                             ),
                           ),
@@ -627,7 +629,7 @@ class _CablePageState extends State<CablePage> {
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFF0A2463),
+                                      color: Color(0xFFce4323),
                                     ),
                                   ),
                                 ],
@@ -668,7 +670,7 @@ class _CablePageState extends State<CablePage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                       width: 2,
                     ),
                   ),
@@ -699,7 +701,7 @@ class _CablePageState extends State<CablePage> {
                           }
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     disabledBackgroundColor: Colors.grey.shade400,
                     elevation: 2,
                     shape: RoundedRectangleBorder(

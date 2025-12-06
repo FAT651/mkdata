@@ -119,16 +119,16 @@ try {
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host = 'mail.bdudata.com';
+        $mail->Host = 'mail.mkdata.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'no-reply@bdudata.com';
+        $mail->Username = 'no-reply@mkdata.com';
         $mail->Password = ']xG28YL,APm-+xbx';
 
         // Use STARTTLS for port 587
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('no-reply@bdudata.com', 'Binali One Data');
+        $mail->setFrom('no-reply@mkdata.com', 'Binali One Data');
         $mail->addAddress($email);
 
 
@@ -137,7 +137,7 @@ try {
         $mail->isHTML(true);
         $mail->Subject = 'Password Reset Request';
 
-        $reset_link = "http://api.bdudata.com/reset-password.php?token=" . $token;
+        $reset_link = "http://api.mkdata.com.ng/reset-password.php?token=" . $token;
 
         $mail->Body = "
             <html>

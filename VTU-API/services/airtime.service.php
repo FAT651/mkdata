@@ -295,8 +295,8 @@ class AirtimeService {
                 error_log("Failed to update transaction newbal/status: " . $e->getMessage());
             }
 
-            // Generate BDU transaction ID
-            $binTransactionId = 'BDU_' . strtoupper(substr(uniqid() . bin2hex(random_bytes(4)), 0, 15));
+            // Generate MK transaction ID
+            $binTransactionId = 'MK_' . strtoupper(substr(uniqid() . bin2hex(random_bytes(4)), 0, 15));
             
             // Map internal transactionStatus to API response status:
             // 0 => success, 1 => failed, 2 => processing
@@ -364,8 +364,8 @@ class AirtimeService {
                 }
             }
 
-            // Generate BDU transaction ID for failed transaction
-            $binTransactionId = 'BDU_' . strtoupper(substr(uniqid() . bin2hex(random_bytes(4)), 0, 15));
+            // Generate MK transaction ID for failed transaction
+            $binTransactionId = 'MK_' . strtoupper(substr(uniqid() . bin2hex(random_bytes(4)), 0, 15));
 
             // Return error response
             return [

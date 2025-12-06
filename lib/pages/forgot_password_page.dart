@@ -108,8 +108,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF0A2463),
-                        const Color(0xFF247BA0),
+                        const Color(0xFFce4323),
+                        const Color(0xFFce4323),
                       ],
                     ),
                   ),
@@ -227,7 +227,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleResetPassword,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0A2463),
+                              backgroundColor: const Color(0xFFce4323),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -269,7 +269,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               child: const Text(
                                 'Login',
                                 style: TextStyle(
-                                  color: Color(0xFF0A2463),
+                                  color: Color(0xFFce4323),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),
@@ -295,7 +295,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               child: const Text(
                                 'Create one',
                                 style: TextStyle(
-                                  color: Color(0xFF0A2463),
+                                  color: Color(0xFFce4323),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),

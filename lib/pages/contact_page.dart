@@ -31,7 +31,7 @@ class ContactPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Help Center'),
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -47,7 +47,7 @@ class ContactPage extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+                  colors: [Color(0xFFce4323), Color(0xFFce4323)],
                 ),
               ),
               child: Column(
@@ -98,7 +98,7 @@ class ContactPage extends StatelessWidget {
                             child: Text(
                               'Frequently Asked Questions',
                               style: TextStyle(
-                                color: Color(0xFF0A2463),
+                                color: Color(0xFFce4323),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
@@ -151,25 +151,25 @@ class ContactPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           TextButton.icon(
-                            onPressed: () => _sendEmail('bdudata0@gmail.com'),
+                            onPressed: () => _sendEmail('mkdata0@gmail.com'),
                             icon: const Icon(
                               Icons.email,
-                              color: Color(0xFF0A2463),
+                              color: Color(0xFFce4323),
                             ),
                             label: const Text(
                               'Email',
-                              style: TextStyle(color: Color(0xFF0A2463)),
+                              style: TextStyle(color: Color(0xFFce4323)),
                             ),
                           ),
                           TextButton.icon(
                             onPressed: () => _makePhoneCall('+2348022412220'),
                             icon: const Icon(
                               Icons.phone,
-                              color: Color(0xFF0A2463),
+                              color: Color(0xFFce4323),
                             ),
                             label: const Text(
                               'Call',
-                              style: TextStyle(color: Color(0xFF0A2463)),
+                              style: TextStyle(color: Color(0xFFce4323)),
                             ),
                           ),
                           TextButton.icon(
@@ -177,11 +177,11 @@ class ContactPage extends StatelessWidget {
                                 _launchURL('https://wa.me/2348022412220'),
                             icon: const Icon(
                               Icons.chat,
-                              color: Color(0xFF0A2463),
+                              color: Color(0xFFce4323),
                             ),
                             label: const Text(
                               'Chat',
-                              style: TextStyle(color: Color(0xFF0A2463)),
+                              style: TextStyle(color: Color(0xFFce4323)),
                             ),
                           ),
                         ],
@@ -203,7 +203,7 @@ class ContactPage extends StatelessWidget {
                             child: Text(
                               'Contact Us',
                               style: TextStyle(
-                                color: Color(0xFF0A2463),
+                                color: Color(0xFFce4323),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
@@ -212,12 +212,12 @@ class ContactPage extends StatelessWidget {
                           const SizedBox(height: 12),
                           ListTile(
                             leading: const CircleAvatar(
-                              backgroundColor: Color(0xFF0A2463),
+                              backgroundColor: Color(0xFFce4323),
                               child: Icon(Icons.email, color: Colors.white),
                             ),
                             title: const Text('Email'),
-                            subtitle: const Text('bdudata0@gmail.com'),
-                            onTap: () => _sendEmail('bdudata0@gmail.com'),
+                            subtitle: const Text('mkdata0@gmail.com'),
+                            onTap: () => _sendEmail('mkdata0@gmail.com'),
                           ),
                           const SizedBox(height: 8),
                           // Follow Us card
@@ -237,7 +237,7 @@ class ContactPage extends StatelessWidget {
                                     child: Text(
                                       'Follow Us',
                                       style: TextStyle(
-                                        color: Color(0xFF0A2463),
+                                        color: Color(0xFFce4323),
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -253,7 +253,7 @@ class ContactPage extends StatelessWidget {
                                         ),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.whatsapp,
-                                          color: Color(0xFF0A2463),
+                                          color: Color(0xFFce4323),
                                         ),
                                       ),
                                       IconButton(
@@ -261,7 +261,7 @@ class ContactPage extends StatelessWidget {
                                             _launchURL('https://facebook.com/'),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.facebook,
-                                          color: Color(0xFF0A2463),
+                                          color: Color(0xFFce4323),
                                         ),
                                       ),
                                       IconButton(
@@ -270,7 +270,7 @@ class ContactPage extends StatelessWidget {
                                         ),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.instagram,
-                                          color: Color(0xFF0A2463),
+                                          color: Color(0xFFce4323),
                                         ),
                                       ),
                                       IconButton(
@@ -278,7 +278,7 @@ class ContactPage extends StatelessWidget {
                                             _launchURL('https://twitter.com/'),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.twitter,
-                                          color: Color(0xFF0A2463),
+                                          color: Color(0xFFce4323),
                                         ),
                                       ),
                                     ],
@@ -289,7 +289,7 @@ class ContactPage extends StatelessWidget {
                           ),
                           ListTile(
                             leading: const CircleAvatar(
-                              backgroundColor: Color(0xFF0A2463),
+                              backgroundColor: Color(0xFFce4323),
                               child: Icon(Icons.phone, color: Colors.white),
                             ),
                             title: const Text('Phone'),
@@ -298,12 +298,13 @@ class ContactPage extends StatelessWidget {
                           ),
                           ListTile(
                             leading: const CircleAvatar(
-                              backgroundColor: Color(0xFF0A2463),
+                              backgroundColor: Color(0xFFce4323),
                               child: Icon(Icons.chat, color: Colors.white),
                             ),
                             title: const Text('Live Chat'),
                             subtitle: const Text('Chat with our support team'),
-                            onTap: () => _launchURL('https://wa.me/2348022412220'),
+                            onTap: () =>
+                                _launchURL('https://wa.me/2348022412220'),
                           ),
                         ],
                       ),

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'delete_account_page.dart';
 import 'contact_page.dart';
 import 'change_transaction_pin_page.dart';
+import 'edit_profile_page.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -241,7 +242,7 @@ class _AccountPageState extends State<AccountPage> {
                 height: 120,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.blue, width: 4),
+                  border: Border.all(color: const Color(0xFFce4323), width: 4),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(60),
@@ -276,6 +277,23 @@ class _AccountPageState extends State<AccountPage> {
               // Divider
               Divider(height: 1),
               // Menu Items
+              _buildMenuItemWithIcon(
+                icon: Icons.edit_outlined,
+                label: 'Edit Profile',
+                onTap: () async {
+                  final updated = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const EditProfilePage(),
+                    ),
+                  );
+                  if (updated == true) {
+                    // Reload user data and profile photo
+                    await loadUserData();
+                    await _loadProfilePhoto();
+                  }
+                },
+              ),
               _buildMenuItemWithIcon(
                 icon: Icons.lock_outline,
                 label: 'Change Transaction Pin',
@@ -315,7 +333,7 @@ class _AccountPageState extends State<AccountPage> {
               ),
               _buildMenuItemWithIcon(
                 icon: Icons.delete_outline,
-                label: 'Delete My bdudata account',
+                label: 'Delete My mkdata account',
                 isDestructive: true,
                 onTap: () {
                   Navigator.push(
@@ -370,7 +388,7 @@ class _AccountPageState extends State<AccountPage> {
             elevation: 0,
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            selectedItemColor: const Color(0xFF0A2463),
+            selectedItemColor: const Color(0xFFce4323),
             unselectedItemColor: Colors.grey.shade500,
             selectedFontSize: getResponsiveSize(context, 11),
             unselectedFontSize: getResponsiveSize(context, 11),
@@ -470,7 +488,7 @@ class _AccountPageState extends State<AccountPage> {
               Switch(
                 value: value,
                 onChanged: onChanged,
-                activeColor: const Color(0xFF0A2463),
+                activeColor: const Color(0xFFce4323),
               ),
             ],
           ),

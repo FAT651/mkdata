@@ -238,7 +238,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                           onRetry();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0A2463),
+                          backgroundColor: const Color(0xFFce4323),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -272,7 +272,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                         child: const Text(
                           'Cancel',
                           style: TextStyle(
-                            color: Color(0xFF0A2463),
+                            color: Color(0xFFce4323),
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -288,7 +288,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -354,7 +354,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                     _showPinSheet();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -385,7 +385,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                   child: const Text(
                     'Cancel',
                     style: TextStyle(
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
@@ -472,7 +472,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: index < pinInput.length
-                                ? const Color(0xFF0A2463)
+                                ? const Color(0xFFce4323)
                                 : Colors.grey.shade300,
                           ),
                         ),
@@ -573,7 +573,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         disabledBackgroundColor: Colors.grey.shade300,
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -630,7 +630,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
           child: isBiometric
               ? const Icon(
                   Icons.fingerprint,
-                  color: Color(0xFF0A2463),
+                  color: Color(0xFFce4323),
                   size: 18,
                 )
               : Text(
@@ -734,7 +734,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: const Text(
           'Electricity',
@@ -825,7 +825,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                             const Text(
                               'Loading providers...',
                               style: TextStyle(
-                                color: Color(0xFF0A2463),
+                                color: Color(0xFFce4323),
                                 fontSize: 14,
                               ),
                             ),
@@ -835,7 +835,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Color(0xFF0A2463),
+                                color: Color(0xFFce4323),
                               ),
                             ),
                           ],
@@ -917,7 +917,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -960,7 +960,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -988,7 +988,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
                             _showConfirmationSheet();
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                       disabledBackgroundColor: Colors.grey.shade400,
                       elevation: 2,
                       shape: RoundedRectangleBorder(
@@ -1043,12 +1043,12 @@ class _ElectricityPageState extends State<ElectricityPage> {
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           border: Border.all(
-            color: isSelected ? const Color(0xFF0A2463) : Colors.grey.shade300,
+            color: isSelected ? const Color(0xFFce4323) : Colors.grey.shade300,
             width: isSelected ? 2 : 1.5,
           ),
           borderRadius: BorderRadius.circular(12),
           color: isSelected
-              ? const Color(0xFF0A2463).withOpacity(0.05)
+              ? const Color(0xFFce4323).withOpacity(0.05)
               : Colors.white,
         ),
         child: Center(
@@ -1058,7 +1058,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
               fontSize: 14,
               fontWeight: FontWeight.bold,
               color: isSelected
-                  ? const Color(0xFF0A2463)
+                  ? const Color(0xFFce4323)
                   : Colors.grey.shade600,
             ),
           ),

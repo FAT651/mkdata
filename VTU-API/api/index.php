@@ -1085,16 +1085,16 @@ try {
 
                 // SMTP settings (reusing existing project settings)
                 $mail->isSMTP();
-                $mail->Host = 'mail.bdudata.com';
+                $mail->Host = 'mail.mkdata.com';
                 $mail->SMTPAuth = true;
-                $mail->Username = 'no-reply@bdudata.com';
+                $mail->Username = 'no-reply@mkdata.com';
                 $mail->Password = ']xG28YL,APm-+xbx';
 
                 // Use STARTTLS for port 587
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port = 587;
 
-                $mail->setFrom('no-reply@bdudata.com', 'Binali One Data');
+                $mail->setFrom('no-reply@mkdata.com', 'Binali One Data');
                 $mail->addAddress('Muhammadbinali1234@gmail.com');
 
                 $mail->isHTML(true);
@@ -1258,6 +1258,112 @@ try {
             ];
             $response['status'] = 'success';
             $response['message'] = 'Subscriber details fetched successfully';
+            break;
+
+        case 'update-profile':
+            if ($requestMethod !== 'POST') {
+                throw new Exception('Method not allowed');
+            }
+
+            $data = json_decode(file_get_contents("php://input"));
+            
+            // Validate required fields
+            if (!isset($data->user_id)) {
+                throw new Exception('Missing required parameter: user_id');
+            }
+
+            if (!isset($data->fname) && !isset($data->lname) && !isset($data->new_password)) {
+                throw new Exception('At least one field (fname, lname, or new_password) must be provided');
+            }
+
+            try {
+                $user_service = new UserService();
+                
+                // Prepare update data
+                $updates = [];
+                $params = [];
+
+                // Update first name if provided
+                if (isset($data->fname) && !empty($data->fname)) {
+                    $updates[] = 'sFname = ?';
+                    $params[] = trim($data->fname);
+                }
+
+                // Update last name if provided
+                if (isset($data->lname) && !empty($data->lname)) {
+                    $updates[] = 'sLname = ?';
+                    $params[] = trim($data->lname);
+                }
+
+                // Update password if provided
+                if (isset($data->new_password) && !empty($data->new_password)) {
+                    // Verify current password first
+                    if (!isset($data->current_password) || empty($data->current_password)) {
+                        throw new Exception('Current password is required to change password');
+                    }
+
+                    // Get current password hash from database
+                    $db = new Database();
+                    $result = $db->query('SELECT sPassword FROM subscribers WHERE sId = ? LIMIT 1', [$data->user_id]);
+                    
+                    if (empty($result)) {
+                        throw new Exception('User not found');
+                    }
+
+                    // Verify current password
+                    $currentHashedPassword = $result[0]['sPassword'];
+                    if (!password_verify($data->current_password, $currentHashedPassword)) {
+                        throw new Exception('Current password is incorrect');
+                    }
+
+                    // Hash new password
+                    $hashedPassword = password_hash($data->new_password, PASSWORD_BCRYPT, ['cost' => 12]);
+                    $updates[] = 'sPassword = ?';
+                    $params[] = $hashedPassword;
+                }
+
+                if (empty($updates)) {
+                    throw new Exception('No valid updates provided');
+                }
+
+                // Add user_id to params for WHERE clause
+                $params[] = $data->user_id;
+
+                // Build and execute update query
+                $updateQuery = 'UPDATE subscribers SET ' . implode(', ', $updates) . ' WHERE sId = ?';
+                $db = new Database();
+                $stmt = $db->getConnection()->prepare($updateQuery);
+                $stmt->execute($params);
+
+                if ($stmt->rowCount() > 0) {
+                    // Fetch updated user data
+                    $result = $db->query('SELECT sId, sFname, sLname, sEmail, sPhone FROM subscribers WHERE sId = ? LIMIT 1', [$data->user_id]);
+                    
+                    if (!empty($result)) {
+                        $response['status'] = 'success';
+                        $response['message'] = 'Profile updated successfully';
+                        $response['data'] = [
+                            'user_id' => $result[0]['sId'],
+                            'fname' => $result[0]['sFname'],
+                            'lname' => $result[0]['sLname'],
+                            'email' => $result[0]['sEmail'],
+                            'phone' => $result[0]['sPhone']
+                        ];
+                    } else {
+                        throw new Exception('Failed to fetch updated profile');
+                    }
+                } else {
+                    throw new Exception('Failed to update profile');
+                }
+
+            } catch (PDOException $e) {
+                error_log("Database error in update-profile: " . $e->getMessage());
+                http_response_code(503);
+                throw new Exception("Database service is currently unavailable. Please try again later.");
+            } catch (Exception $e) {
+                error_log("Error in update-profile: " . $e->getMessage());
+                throw $e;
+            }
             break;
 
         default:

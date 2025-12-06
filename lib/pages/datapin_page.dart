@@ -189,7 +189,7 @@ class _DatapinPageState extends State<DatapinPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: index < pinInput.length
-                                ? const Color(0xFF0A2463)
+                                ? const Color(0xFFce4323)
                                 : Colors.grey.shade300,
                           ),
                         ),
@@ -270,7 +270,7 @@ class _DatapinPageState extends State<DatapinPage> {
                           }
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                       disabledBackgroundColor: Colors.grey.shade400,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -366,7 +366,7 @@ class _DatapinPageState extends State<DatapinPage> {
           ),
           child: const Icon(
             Icons.fingerprint,
-            color: Color(0xFF0A2463),
+            color: Color(0xFFce4323),
             size: 24,
           ),
         ),
@@ -579,7 +579,7 @@ class _DatapinPageState extends State<DatapinPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: const Text(
           'Data Card',
@@ -732,7 +732,7 @@ class _DatapinPageState extends State<DatapinPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -767,7 +767,7 @@ class _DatapinPageState extends State<DatapinPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -789,7 +789,7 @@ class _DatapinPageState extends State<DatapinPage> {
                       ? null
                       : _handlePurchase,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     disabledBackgroundColor: Colors.grey.shade400,
                     elevation: 2,
                     shape: RoundedRectangleBorder(

@@ -56,7 +56,7 @@ class _InputFieldState extends State<InputField> {
                   child: Text(
                     _obscureText ? 'Show' : 'Hide',
                     style: const TextStyle(
-                      color: Colors.blue,
+                      color: Color(0xFFce4323),
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -73,7 +73,7 @@ class _InputFieldState extends State<InputField> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF0A2463), width: 2),
+            borderSide: const BorderSide(color: Color(0xFFce4323), width: 2),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),

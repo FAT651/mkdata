@@ -274,7 +274,7 @@ class _WalletPageState extends State<WalletPage>
           'Virtual Account',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -283,7 +283,7 @@ class _WalletPageState extends State<WalletPage>
       ),
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF247BA0)),
+              child: CircularProgressIndicator(color: Color(0xFFce4323)),
             )
           : SingleChildScrollView(
               child: Padding(
@@ -296,7 +296,7 @@ class _WalletPageState extends State<WalletPage>
                       style: TextStyle(
                         fontSize: getResponsiveSize(context, 16),
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0A2463),
+                        color: const Color.fromARGB(255, 0, 0, 0),
                       ),
                     ),
                     SizedBox(height: getResponsiveSize(context, 16)),
@@ -357,7 +357,7 @@ class _WalletPageState extends State<WalletPage>
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0A2463),
+                              backgroundColor: const Color(0xFFce4323),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -403,7 +403,7 @@ class _WalletPageState extends State<WalletPage>
             elevation: 0,
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            selectedItemColor: const Color(0xFF0A2463),
+            selectedItemColor: const Color(0xFFce4323),
             unselectedItemColor: Colors.grey.shade500,
             selectedFontSize: getResponsiveSize(context, 11),
             unselectedFontSize: getResponsiveSize(context, 11),
@@ -447,7 +447,13 @@ class _WalletPageState extends State<WalletPage>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+          colors: [
+            Color(0xFFf05533),
+            Color(0xFFce4323),
+            Color(0xFF9d2e1a),
+            Color(0xFF6b1f0f),
+          ],
+          stops: [0.0, 0.3, 0.6, 1.0],
         ),
         borderRadius: BorderRadius.circular(getResponsiveSize(context, 12)),
         boxShadow: [

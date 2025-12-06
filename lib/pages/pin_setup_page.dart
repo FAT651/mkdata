@@ -128,7 +128,7 @@ class _PinSetupPageState extends State<PinSetupPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: const Color(0xFF0A2463),
+                      color: const Color(0xFFce4323),
                       width: 3,
                     ),
                   ),
@@ -136,7 +136,7 @@ class _PinSetupPageState extends State<PinSetupPage> {
                     child: Icon(
                       Icons.lock_outline,
                       size: 50,
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                     ),
                   ),
                 ),
@@ -197,7 +197,7 @@ class _PinSetupPageState extends State<PinSetupPage> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(
-                              color: Color(0xFF0A2463),
+                              color: Color(0xFFce4323),
                               width: 2,
                             ),
                           ),
@@ -252,7 +252,7 @@ class _PinSetupPageState extends State<PinSetupPage> {
                           ? _handlePinComplete
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         disabledBackgroundColor: Colors.grey.shade300,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),

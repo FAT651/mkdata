@@ -1,4 +1,4 @@
-package inc.bdu.data
+package inc.mk.data
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

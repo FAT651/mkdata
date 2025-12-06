@@ -188,7 +188,7 @@ class _ExamPinPageState extends State<ExamPinPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: index < pinInput.length
-                                ? const Color(0xFF0A2463)
+                                ? const Color(0xFFce4323)
                                 : Colors.grey.shade300,
                           ),
                         ),
@@ -286,7 +286,7 @@ class _ExamPinPageState extends State<ExamPinPage> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         disabledBackgroundColor: Colors.grey.shade300,
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -343,7 +343,7 @@ class _ExamPinPageState extends State<ExamPinPage> {
           child: isBiometric
               ? const Icon(
                   Icons.fingerprint,
-                  color: Color(0xFF0A2463),
+                  color: Color(0xFFce4323),
                   size: 18,
                 )
               : Text(
@@ -404,7 +404,7 @@ class _ExamPinPageState extends State<ExamPinPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: const Text(
           'Exam',
@@ -495,13 +495,13 @@ class _ExamPinPageState extends State<ExamPinPage> {
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: isSelected
-                                  ? const Color(0xFF0A2463)
+                                  ? const Color(0xFFce4323)
                                   : Colors.grey.shade300,
                               width: isSelected ? 2 : 1.5,
                             ),
                             borderRadius: BorderRadius.circular(12),
                             color: isSelected
-                                ? Colors.blue.shade50
+                                ? const Color(0xFFce4323).withOpacity(0.1)
                                 : Colors.white,
                           ),
                           child: Column(
@@ -536,7 +536,7 @@ class _ExamPinPageState extends State<ExamPinPage> {
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   color: isSelected
-                                      ? const Color(0xFF0A2463)
+                                      ? const Color(0xFFce4323)
                                       : Colors.black,
                                 ),
                               ),
@@ -576,7 +576,7 @@ class _ExamPinPageState extends State<ExamPinPage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                       width: 2,
                     ),
                   ),
@@ -605,7 +605,7 @@ class _ExamPinPageState extends State<ExamPinPage> {
                           }
                         },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     disabledBackgroundColor: Colors.grey.shade400,
                     elevation: 2,
                     shape: RoundedRectangleBorder(

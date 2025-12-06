@@ -529,7 +529,7 @@ class _DataPageState extends State<DataPage> {
                           onRetry();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0A2463),
+                          backgroundColor: const Color(0xFFce4323),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -563,7 +563,7 @@ class _DataPageState extends State<DataPage> {
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                            color: const Color(0xFF0A2463),
+                            color: const Color(0xFFce4323),
                             fontSize: _getResponsiveFontSize(context, 14),
                             fontWeight: FontWeight.bold,
                           ),
@@ -579,7 +579,7 @@ class _DataPageState extends State<DataPage> {
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -842,7 +842,7 @@ class _DataPageState extends State<DataPage> {
         final status = data['status'] ?? 'processing';
         final transactionId =
             data['transactionId'] ??
-            'BDU_${DateTime.now().millisecondsSinceEpoch}';
+            'MK_${DateTime.now().millisecondsSinceEpoch}';
         final amount = _selectedPlan?.price.toString() ?? '0.0';
         final transactionDate = DateTime.now().toString();
         final planValidity = _selectedPlan?.validity ?? '30';
@@ -920,7 +920,7 @@ class _DataPageState extends State<DataPage> {
           MaterialPageRoute(
             builder: (context) => TransactionDetailsPage(
               initialStatus: 'failed',
-              transactionId: 'BDU_${DateTime.now().millisecondsSinceEpoch}',
+              transactionId: 'MK_${DateTime.now().millisecondsSinceEpoch}',
               amount: amount,
               phoneNumber: phoneNumber,
               network: _selectedNetwork,
@@ -1115,7 +1115,7 @@ class _DataPageState extends State<DataPage> {
                     _showPinSheet();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -1217,7 +1217,7 @@ class _DataPageState extends State<DataPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: index < pinInput.length
-                                ? const Color(0xFF0A2463)
+                                ? const Color(0xFFce4323)
                                 : Colors.grey.shade300,
                           ),
                         ),
@@ -1268,7 +1268,7 @@ class _DataPageState extends State<DataPage> {
                                       child: CircularProgressIndicator(
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                              const Color(0xFF0A2463),
+                                              const Color(0xFFce4323),
                                             ),
                                       ),
                                     ),
@@ -1329,7 +1329,7 @@ class _DataPageState extends State<DataPage> {
                                   child: Center(
                                     child: CircularProgressIndicator(
                                       valueColor: AlwaysStoppedAnimation<Color>(
-                                        const Color(0xFF0A2463),
+                                        const Color(0xFFce4323),
                                       ),
                                     ),
                                   ),
@@ -1369,7 +1369,7 @@ class _DataPageState extends State<DataPage> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         disabledBackgroundColor: Colors.grey.shade300,
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -1426,7 +1426,7 @@ class _DataPageState extends State<DataPage> {
           child: isBiometric
               ? Icon(
                   Icons.fingerprint,
-                  color: const Color(0xFF0A2463),
+                  color: const Color(0xFFce4323),
                   size: _getResponsiveIconSize(context, 40),
                 )
               : Text(
@@ -1452,7 +1452,7 @@ class _DataPageState extends State<DataPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: Text(
           'Data Bundle',
@@ -1596,7 +1596,7 @@ class _DataPageState extends State<DataPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -1739,12 +1739,12 @@ class _DataPageState extends State<DataPage> {
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? const Color(
-                                          0xFF0A2463,
+                                          0xFFce4323,
                                         ).withOpacity(0.08)
                                       : Colors.white,
                                   border: Border.all(
                                     color: isSelected
-                                        ? const Color(0xFF0A2463)
+                                        ? const Color(0xFFce4323)
                                         : Colors.grey.shade300,
                                     width: isSelected ? 2 : 1,
                                   ),
@@ -1803,7 +1803,7 @@ class _DataPageState extends State<DataPage> {
                                           16,
                                         ),
                                         fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF0A2463),
+                                        color: const Color(0xFFce4323),
                                       ),
                                     ),
                                   ],
@@ -1842,7 +1842,7 @@ class _DataPageState extends State<DataPage> {
           ),
           decoration: BoxDecoration(
             color: isSelected && isEnabled
-                ? const Color(0xFF0A2463)
+                ? const Color(0xFFce4323)
                 : Colors.grey.shade100,
             borderRadius: BorderRadius.circular(20),
           ),

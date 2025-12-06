@@ -115,7 +115,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: _currentPage == index
-                              ? const Color(0xFF0A2463)
+                              ? const Color(0xFFce4323)
                               : Colors.grey.shade300,
                         ),
                       ),
@@ -141,7 +141,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         child: const Text(
                           'Skip',
                           style: TextStyle(
-                            color: Color(0xFF0A2463),
+                            color: Color(0xFFce4323),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -150,7 +150,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         width: 56,
                         height: 56,
                         child: FloatingActionButton(
-                          backgroundColor: const Color(0xFF0A2463),
+                          backgroundColor: const Color(0xFFce4323),
                           elevation: 6,
                           onPressed: () {
                             if (_currentPage == onboardingItems.length - 1) {
@@ -219,7 +219,7 @@ class OnboardingScreen extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+              colors: [Color(0xFFce4323), Color(0xFFce4323)],
             ),
           ),
         ),

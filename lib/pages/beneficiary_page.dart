@@ -234,7 +234,7 @@ class _BeneficiaryPageState extends State<BeneficiaryPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: const Text(
           'Beneficiaries',
@@ -261,7 +261,7 @@ class _BeneficiaryPageState extends State<BeneficiaryPage> {
                     width: 40,
                     height: 40,
                     child: CircularProgressIndicator(
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                       strokeWidth: 2.5,
                     ),
                   ),
@@ -269,7 +269,7 @@ class _BeneficiaryPageState extends State<BeneficiaryPage> {
                   Text(
                     'Loading beneficiaries...',
                     style: TextStyle(
-                      color: Color(0xFF0A2463),
+                      color: Color(0xFFce4323),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -303,7 +303,7 @@ class _BeneficiaryPageState extends State<BeneficiaryPage> {
                     child: ElevatedButton(
                       onPressed: () => _showAddEditDialog(),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -350,7 +350,7 @@ class _BeneficiaryPageState extends State<BeneficiaryPage> {
                         vertical: 8,
                       ),
                       leading: CircleAvatar(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         child: Text(
                           name.isNotEmpty ? name[0].toUpperCase() : '?',
                           style: const TextStyle(

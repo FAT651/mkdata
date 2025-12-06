@@ -78,9 +78,15 @@ class _SplashPageState extends State<SplashPage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF0A2463), Color(0xFF247BA0)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFf05533),
+              Color(0xFFce4323),
+              Color(0xFF9d2e1a),
+              Color(0xFF6b1f0f),
+            ],
+            stops: [0.0, 0.3, 0.6, 1.0],
           ),
         ),
         child: SafeArea(
@@ -97,7 +103,7 @@ class _SplashPageState extends State<SplashPage> {
                   children: [
                     // Logo/Icon
                     Image.asset(
-                      'assets/images/app_icon.png',
+                      'assets/images/app_icon_white.png',
                       width: 80,
                       height: 80,
                     ),
@@ -105,7 +111,7 @@ class _SplashPageState extends State<SplashPage> {
 
                     // Welcome text
                     Text(
-                      'Welcome to bdudata',
+                      'Welcome to mkdata',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -204,7 +210,7 @@ class _SplashPageState extends State<SplashPage> {
                             child: const Text(
                               'LOGIN',
                               style: TextStyle(
-                                color: Color(0xFF0A2463),
+                                color: Color(0xFFce4323),
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),

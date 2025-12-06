@@ -335,7 +335,7 @@ class _AirtimePageState extends State<AirtimePage> {
                           onRetry();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0A2463),
+                          backgroundColor: const Color(0xFFce4323),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -369,7 +369,7 @@ class _AirtimePageState extends State<AirtimePage> {
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                            color: const Color(0xFF0A2463),
+                            color: const Color(0xFFce4323),
                             fontSize: _getResponsiveFontSize(context, 14),
                             fontWeight: FontWeight.bold,
                           ),
@@ -385,7 +385,7 @@ class _AirtimePageState extends State<AirtimePage> {
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -496,7 +496,7 @@ class _AirtimePageState extends State<AirtimePage> {
                     _showPinSheet();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A2463),
+                    backgroundColor: const Color(0xFFce4323),
                     elevation: 2,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -527,7 +527,7 @@ class _AirtimePageState extends State<AirtimePage> {
                   child: Text(
                     'Cancel',
                     style: TextStyle(
-                      color: const Color(0xFF0A2463),
+                      color: const Color(0xFFce4323),
                       fontSize: _getResponsiveFontSize(context, 14),
                       fontWeight: FontWeight.bold,
                     ),
@@ -619,7 +619,7 @@ class _AirtimePageState extends State<AirtimePage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: index < pinInput.length
-                                ? const Color(0xFF0A2463)
+                                ? const Color(0xFFce4323)
                                 : Colors.grey.shade300,
                           ),
                         ),
@@ -730,7 +730,7 @@ class _AirtimePageState extends State<AirtimePage> {
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF0A2463),
+                        backgroundColor: const Color(0xFFce4323),
                         disabledBackgroundColor: Colors.grey.shade300,
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -787,7 +787,7 @@ class _AirtimePageState extends State<AirtimePage> {
           child: isBiometric
               ? Icon(
                   Icons.fingerprint,
-                  color: const Color(0xFF0A2463),
+                  color: const Color(0xFFce4323),
                   size: _getResponsiveIconSize(context, 40),
                 )
               : Text(
@@ -965,7 +965,7 @@ class _AirtimePageState extends State<AirtimePage> {
               child: Center(
                 child: CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    const Color(0xFF0A2463),
+                    const Color(0xFFce4323),
                   ),
                 ),
               ),
@@ -1044,7 +1044,7 @@ class _AirtimePageState extends State<AirtimePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A2463),
+        backgroundColor: const Color(0xFFce4323),
         elevation: 0,
         title: Text(
           'Airtime TopUp',
@@ -1184,7 +1184,7 @@ class _AirtimePageState extends State<AirtimePage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -1258,7 +1258,7 @@ class _AirtimePageState extends State<AirtimePage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(
-                        color: Color(0xFF0A2463),
+                        color: Color(0xFFce4323),
                         width: 2,
                       ),
                     ),
@@ -1288,7 +1288,7 @@ class _AirtimePageState extends State<AirtimePage> {
                             }
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0A2463),
+                      backgroundColor: const Color(0xFFce4323),
                       disabledBackgroundColor: Colors.grey.shade400,
                       elevation: 2,
                       shape: RoundedRectangleBorder(

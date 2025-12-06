@@ -184,7 +184,7 @@ class _RegisterPageState extends State<RegisterPage> {
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFF0A2463),
+                backgroundColor: const Color(0xFFce4323),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -312,7 +312,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
-        statusBarColor: Color(0xFF0A2463),
+        statusBarColor: Color(0xFFce4323),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
       ),
@@ -335,8 +335,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF0A2463),
-                        const Color(0xFF247BA0),
+                        const Color(0xFFce4323),
+                        const Color(0xFFce4323),
                       ],
                     ),
                   ),
@@ -492,7 +492,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleRegister,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF0A2463),
+                              backgroundColor: const Color(0xFFce4323),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -542,7 +542,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: const Text(
                                 'Merchant Login?',
                                 style: TextStyle(
-                                  color: Color(0xFF0A2463),
+                                  color: Color(0xFFce4323),
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),
