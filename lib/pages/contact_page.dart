@@ -162,7 +162,7 @@ class ContactPage extends StatelessWidget {
                             ),
                           ),
                           TextButton.icon(
-                            onPressed: () => _makePhoneCall('+2348022412220'),
+                            onPressed: () => _makePhoneCall('+2349064349466'),
                             icon: const Icon(
                               Icons.phone,
                               color: Color(0xFFce4323),
@@ -174,7 +174,7 @@ class ContactPage extends StatelessWidget {
                           ),
                           TextButton.icon(
                             onPressed: () =>
-                                _launchURL('https://wa.me/2348022412220'),
+                                _launchURL('https://wa.me/+2349064349466'),
                             icon: const Icon(
                               Icons.chat,
                               color: Color(0xFFce4323),
@@ -216,8 +216,8 @@ class ContactPage extends StatelessWidget {
                               child: Icon(Icons.email, color: Colors.white),
                             ),
                             title: const Text('Email'),
-                            subtitle: const Text('mkdata0@gmail.com'),
-                            onTap: () => _sendEmail('mkdata0@gmail.com'),
+                            subtitle: const Text('mkdata@gmail.com'),
+                            onTap: () => _sendEmail('mkdata@gmail.com'),
                           ),
                           const SizedBox(height: 8),
                           // Follow Us card
@@ -249,7 +249,7 @@ class ContactPage extends StatelessWidget {
                                     children: [
                                       IconButton(
                                         onPressed: () => _launchURL(
-                                          'https://wa.me/2348022412220',
+                                          'https://wa.me/+2349064349466',
                                         ),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.whatsapp,
@@ -293,8 +293,8 @@ class ContactPage extends StatelessWidget {
                               child: Icon(Icons.phone, color: Colors.white),
                             ),
                             title: const Text('Phone'),
-                            subtitle: const Text('2348022412220'),
-                            onTap: () => _makePhoneCall('+2348022412220'),
+                            subtitle: const Text('+2349064349466'),
+                            onTap: () => _makePhoneCall('++2349064349466'),
                           ),
                           ListTile(
                             leading: const CircleAvatar(
@@ -304,7 +304,7 @@ class ContactPage extends StatelessWidget {
                             title: const Text('Live Chat'),
                             subtitle: const Text('Chat with our support team'),
                             onTap: () =>
-                                _launchURL('https://wa.me/2348022412220'),
+                                _launchURL('https://wa.me/+2349064349466'),
                           ),
                         ],
                       ),

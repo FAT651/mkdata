@@ -930,16 +930,18 @@ try {
                     $updateParts = [];
                     $params = [];
                     if (!empty($pagaAcct)) {
-                        $updateParts[] = 'sPaga = ?';
+                        // Save Paga account in sAsfiyBank
+                        $updateParts[] = 'sAsfiyBank = ?';
                         $params[] = $pagaAcct;
                     }
                     if (!empty($palmpayAcct)) {
-                        $updateParts[] = 'sPalmpayBank = ?';
+                        // Save Palmpay account in sPaga
+                        $updateParts[] = 'sPaga = ?';
                         $params[] = $palmpayAcct;
                     }
                     // Always mark that accounts were generated in the app
                     $updateParts[] = 'sBankName = ?';
-                    $params[] = 'app';
+                    $params[] = 'application';
                     $params[] = $data->user_id;
                     $updateQuery = 'UPDATE subscribers SET ' . implode(', ', $updateParts) . ' WHERE sId = ?';
                     $db->query($updateQuery, $params);
@@ -967,6 +969,338 @@ try {
                 $response['message'] = 'Database service is currently unavailable.';
             } catch (Exception $e) {
                 error_log('Error in generate-palmpay-paga: ' . $e->getMessage());
+                http_response_code(500);
+                $response['status'] = 'error';
+                $response['message'] = $e->getMessage();
+            }
+            break;
+
+        case 'generate-paga-only':
+            // Generate Paga account only and save to sAsfiyBank
+            if ($requestMethod !== 'POST') {
+                http_response_code(405);
+                $response['message'] = 'Method not allowed';
+                break;
+            }
+
+            $data = json_decode(file_get_contents("php://input"));
+            if (!isset($data->user_id)) {
+                http_response_code(400);
+                $response['message'] = 'Missing required parameter: user_id';
+                break;
+            }
+
+            try {
+                $db = new Database();
+
+                // Ensure user exists
+                $query = "SELECT sFname, sLname, sPhone, sEmail, sAsfiyBank FROM subscribers WHERE sId = ?";
+                $rows = $db->query($query, [$data->user_id]);
+                if (empty($rows)) {
+                    throw new Exception('User not found');
+                }
+
+                $user = $rows[0];
+                $paga = $user['sAsfiyBank'] ?? '';
+
+                // If we already have Paga account, return it immediately
+                if (!empty($paga)) {
+                    $response['status'] = 'success';
+                    $response['message'] = 'Paga account fetched';
+                    $response['data'] = [
+                        'paga_account' => $paga,
+                    ];
+                    http_response_code(200);
+                    break;
+                }
+
+                // Fetch Aspfiy API key and webhook from apiconfigs
+                $cfg = $db->query("SELECT name, value FROM apiconfigs WHERE name IN (?, ?)", ['asfiyApi', 'asfiyWebhook']);
+                $aspKey = '';
+                $webhookUrl = '';
+                if (!empty($cfg)) {
+                    foreach ($cfg as $c) {
+                        if ($c['name'] === 'asfiyApi') $aspKey = $c['value'];
+                        if ($c['name'] === 'asfiyWebhook') $webhookUrl = $c['value'];
+                    }
+                }
+                if (empty($aspKey)) {
+                    throw new Exception('Aspfiy API key not configured');
+                }
+
+                // Helper: perform POST to Aspfiy reserve endpoints
+                $callAspfiy = function($endpoint, $payload) use ($aspKey) {
+                    $url = rtrim('https://api-v1.aspfiy.com', '/') . '/' . ltrim($endpoint, '/');
+                    $ch = curl_init($url);
+                    $body = json_encode($payload);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                        'Content-Type: application/json',
+                        'Authorization: Bearer ' . $aspKey,
+                        'Content-Length: ' . strlen($body)
+                    ]);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+                    $resp = curl_exec($ch);
+                    $err = curl_error($ch);
+                    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+
+                    if ($err) {
+                        throw new Exception('HTTP request error: ' . $err);
+                    }
+
+                    $decoded = json_decode($resp, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        throw new Exception('Invalid JSON from Aspfiy: ' . json_last_error_msg());
+                    }
+
+                    return ['code' => $code, 'body' => $decoded];
+                };
+
+                $referenceBase = 'PAGA-' . $data->user_id . '-' . time();
+                $webhookUrl = !empty($webhookUrl) ? $webhookUrl : null;
+
+                $firstName = $user['sFname'] ?? '';
+                $lastName = $user['sLname'] ?? '';
+                $phone = $user['sPhone'] ?? '';
+
+                // Reserve Paga
+                $pagaPayload = [
+                    'reference' => $referenceBase . '-PAGA',
+                    'firstName' => $firstName,
+                    'lastName' => $lastName,
+                    'phone' => $phone,
+                    'email' => $user['sEmail'] ?? '',
+                ];
+                if (!empty($webhookUrl)) $pagaPayload['webhookUrl'] = $webhookUrl;
+
+                error_log('Calling Aspfiy reserve-paga with payload: ' . json_encode($pagaPayload));
+                $pagaResp = $callAspfiy('reserve-paga/', $pagaPayload);
+
+                $pagaAcct = '';
+                $pagaAcctName = '';
+                $pagaBankName = '';
+
+                if ($pagaResp['code'] >= 200 && $pagaResp['code'] < 300) {
+                    $body = $pagaResp['body'];
+                    $pagaOk = (!empty($body['data'])) || (!empty($body['status']) && (strtolower((string)$body['status']) === 'success' || $body['status'] === true || $body['status'] === 'true'));
+                    if ($pagaOk && !empty($body['data']) && is_array($body['data'])) {
+                        $d = $body['data'];
+                        $pagaAcct = $d['account_number'] ?? $d['account'] ?? $d['accountNo'] ?? $d['reference'] ?? '';
+                        $pagaAcctName = $d['account_name'] ?? $d['name'] ?? '';
+                        $pagaBankName = $d['bank_name'] ?? $d['bank'] ?? '';
+                        if (is_array($pagaAcct) || is_object($pagaAcct)) {
+                            $cand = (array)$pagaAcct;
+                            $pagaAcct = $cand['account_number'] ?? $cand['accountNo'] ?? $cand['account'] ?? $cand['reference'] ?? '';
+                            if (empty($pagaAcctName)) $pagaAcctName = $cand['account_name'] ?? $cand['name'] ?? '';
+                            if (empty($pagaBankName)) $pagaBankName = $cand['bank_name'] ?? $cand['bank'] ?? '';
+                        }
+                        if (!empty($pagaAcct)) {
+                            error_log('Aspfiy reserve-paga created account: ' . $pagaAcct);
+                        } else {
+                            error_log('Aspfiy reserve-paga response (no account number): ' . print_r($pagaResp, true));
+                        }
+                    } else {
+                        error_log('Aspfiy reserve-paga response (no account): ' . print_r($pagaResp, true));
+                    }
+                } else {
+                    error_log('Aspfiy reserve-paga failed (http): ' . print_r($pagaResp, true));
+                }
+
+                $pagaAcct = is_null($pagaAcct) ? '' : trim((string)$pagaAcct);
+
+                if (!empty($pagaAcct)) {
+                    $updateQuery = 'UPDATE subscribers SET sAsfiyBank = ?, sBankName = ? WHERE sId = ?';
+                    $db->query($updateQuery, [$pagaAcct, 'application', $data->user_id]);
+
+                    $response['status'] = 'success';
+                    $response['message'] = 'Paga account generated/updated';
+                    $response['data'] = [
+                        'paga_account' => $pagaAcct,
+                        'paga_account_name' => $pagaAcctName,
+                        'paga_bank_name' => $pagaBankName,
+                    ];
+                    http_response_code(200);
+                } else {
+                    $response['status'] = 'error';
+                    $response['message'] = 'Failed to reserve Paga account. See server logs.';
+                    http_response_code(502);
+                }
+            } catch (PDOException $e) {
+                error_log('Database error in generate-paga-only: ' . $e->getMessage());
+                http_response_code(503);
+                $response['status'] = 'error';
+                $response['message'] = 'Database service is currently unavailable.';
+            } catch (Exception $e) {
+                error_log('Error in generate-paga-only: ' . $e->getMessage());
+                http_response_code(500);
+                $response['status'] = 'error';
+                $response['message'] = $e->getMessage();
+            }
+            break;
+
+        case 'generate-palmpay-only':
+            // Generate Palmpay account only and save to sPaga
+            if ($requestMethod !== 'POST') {
+                http_response_code(405);
+                $response['message'] = 'Method not allowed';
+                break;
+            }
+
+            $data = json_decode(file_get_contents("php://input"));
+            if (!isset($data->user_id)) {
+                http_response_code(400);
+                $response['message'] = 'Missing required parameter: user_id';
+                break;
+            }
+
+            try {
+                $db = new Database();
+
+                // Ensure user exists
+                $query = "SELECT sFname, sLname, sPhone, sEmail, sPaga FROM subscribers WHERE sId = ?";
+                $rows = $db->query($query, [$data->user_id]);
+                if (empty($rows)) {
+                    throw new Exception('User not found');
+                }
+
+                $user = $rows[0];
+                $palmpay = $user['sPaga'] ?? '';
+
+                // If we already have Palmpay account, return it immediately
+                if (!empty($palmpay)) {
+                    $response['status'] = 'success';
+                    $response['message'] = 'Palmpay account fetched';
+                    $response['data'] = [
+                        'palmpay_account' => $palmpay,
+                    ];
+                    http_response_code(200);
+                    break;
+                }
+
+                // Fetch Aspfiy API key and webhook from apiconfigs
+                $cfg = $db->query("SELECT name, value FROM apiconfigs WHERE name IN (?, ?)", ['asfiyApi', 'asfiyWebhook']);
+                $aspKey = '';
+                $webhookUrl = '';
+                if (!empty($cfg)) {
+                    foreach ($cfg as $c) {
+                        if ($c['name'] === 'asfiyApi') $aspKey = $c['value'];
+                        if ($c['name'] === 'asfiyWebhook') $webhookUrl = $c['value'];
+                    }
+                }
+                if (empty($aspKey)) {
+                    throw new Exception('Aspfiy API key not configured');
+                }
+
+                // Helper: perform POST to Aspfiy reserve endpoints
+                $callAspfiy = function($endpoint, $payload) use ($aspKey) {
+                    $url = rtrim('https://api-v1.aspfiy.com', '/') . '/' . ltrim($endpoint, '/');
+                    $ch = curl_init($url);
+                    $body = json_encode($payload);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                        'Content-Type: application/json',
+                        'Authorization: Bearer ' . $aspKey,
+                        'Content-Length: ' . strlen($body)
+                    ]);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+                    $resp = curl_exec($ch);
+                    $err = curl_error($ch);
+                    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                    curl_close($ch);
+
+                    if ($err) {
+                        throw new Exception('HTTP request error: ' . $err);
+                    }
+
+                    $decoded = json_decode($resp, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        throw new Exception('Invalid JSON from Aspfiy: ' . json_last_error_msg());
+                    }
+
+                    return ['code' => $code, 'body' => $decoded];
+                };
+
+                $referenceBase = 'PALMPAY-' . $data->user_id . '-' . time();
+                $webhookUrl = !empty($webhookUrl) ? $webhookUrl : null;
+
+                $firstName = $user['sFname'] ?? '';
+                $lastName = $user['sLname'] ?? '';
+                $phone = $user['sPhone'] ?? '';
+
+                // Reserve Palmpay
+                $palmpayPayload = [
+                    'reference' => $referenceBase . '-PALMPAY',
+                    'firstName' => $firstName,
+                    'lastName' => $lastName,
+                    'phone' => $phone,
+                    'email' => $user['sEmail'] ?? '',
+                ];
+                if (!empty($webhookUrl)) $palmpayPayload['webhookUrl'] = $webhookUrl;
+
+                error_log('Calling Aspfiy reserve-palmpay with payload: ' . json_encode($palmpayPayload));
+                $palmpayResp = $callAspfiy('reserve-palmpay/', $palmpayPayload);
+
+                $palmpayAcct = '';
+                $palmpayAcctName = '';
+                $palmpayBankName = '';
+
+                if ($palmpayResp['code'] >= 200 && $palmpayResp['code'] < 300) {
+                    $body = $palmpayResp['body'];
+                    $palmOk = (!empty($body['data'])) || (!empty($body['status']) && (strtolower((string)$body['status']) === 'success' || $body['status'] === true || $body['status'] === 'true'));
+                    if ($palmOk && !empty($body['data']) && is_array($body['data'])) {
+                        $d = $body['data'];
+                        $palmpayAcct = $d['account_number'] ?? $d['account'] ?? $d['accountNo'] ?? $d['reference'] ?? '';
+                        $palmpayAcctName = $d['account_name'] ?? $d['name'] ?? '';
+                        $palmpayBankName = $d['bank_name'] ?? $d['bank'] ?? '';
+                        if (is_array($palmpayAcct) || is_object($palmpayAcct)) {
+                            $cand = (array)$palmpayAcct;
+                            $palmpayAcct = $cand['account_number'] ?? $cand['accountNo'] ?? $cand['account'] ?? $cand['reference'] ?? '';
+                            if (empty($palmpayAcctName)) $palmpayAcctName = $cand['account_name'] ?? $cand['name'] ?? '';
+                            if (empty($palmpayBankName)) $palmpayBankName = $cand['bank_name'] ?? $cand['bank'] ?? '';
+                        }
+                        if (!empty($palmpayAcct)) {
+                            error_log('Aspfiy reserve-palmpay created account: ' . $palmpayAcct);
+                        } else {
+                            error_log('Aspfiy reserve-palmpay response (no account number): ' . print_r($palmpayResp, true));
+                        }
+                    } else {
+                        error_log('Aspfiy reserve-palmpay response (no account): ' . print_r($palmpayResp, true));
+                    }
+                } else {
+                    error_log('Aspfiy reserve-palmpay failed (http): ' . print_r($palmpayResp, true));
+                }
+
+                $palmpayAcct = is_null($palmpayAcct) ? '' : trim((string)$palmpayAcct);
+
+                if (!empty($palmpayAcct)) {
+                    $updateQuery = 'UPDATE subscribers SET sPaga = ?, sBankName = ? WHERE sId = ?';
+                    $db->query($updateQuery, [$palmpayAcct, 'application', $data->user_id]);
+
+                    $response['status'] = 'success';
+                    $response['message'] = 'Palmpay account generated/updated';
+                    $response['data'] = [
+                        'palmpay_account' => $palmpayAcct,
+                        'palmpay_account_name' => $palmpayAcctName,
+                        'palmpay_bank_name' => $palmpayBankName,
+                    ];
+                    http_response_code(200);
+                } else {
+                    $response['status'] = 'error';
+                    $response['message'] = 'Failed to reserve Palmpay account. See server logs.';
+                    http_response_code(502);
+                }
+            } catch (PDOException $e) {
+                error_log('Database error in generate-palmpay-only: ' . $e->getMessage());
+                http_response_code(503);
+                $response['status'] = 'error';
+                $response['message'] = 'Database service is currently unavailable.';
+            } catch (Exception $e) {
+                error_log('Error in generate-palmpay-only: ' . $e->getMessage());
                 http_response_code(500);
                 $response['status'] = 'error';
                 $response['message'] = $e->getMessage();

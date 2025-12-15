@@ -7,6 +7,35 @@ import '../services/api_service.dart';
 // import 'manual_payment_page.dart';
 // manual payment UI still exists as a page but the quick action is removed from Wallet
 
+Future<void> _sendAccountGenerationNotification(
+  String userId,
+  String accountType,
+) async {
+  try {
+    final response = await http
+        .post(
+          Uri.parse('https://api.mkdata.com.ng/api/send-notification'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode({
+            'user_id': userId,
+            'type': 'account_generated',
+            'title': '💰 Virtual Account Generated',
+            'account_type': accountType,
+          }),
+        )
+        .timeout(const Duration(seconds: 10));
+
+    if (response.statusCode != 200) {
+      print(
+        'Error sending account generation notification: ${response.statusCode}',
+      );
+    }
+  } catch (e) {
+    print('Error sending account generation notification: $e');
+    // Don't throw - notification failure shouldn't block the main flow
+  }
+}
+
 class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
 
@@ -159,7 +188,7 @@ class _WalletPageState extends State<WalletPage>
     }
   }
 
-  Future<void> _generateAccounts() async {
+  Future<void> _generateAccounts({String type = 'both'}) async {
     try {
       setState(() {
         _isGenerating = true;
@@ -171,7 +200,15 @@ class _WalletPageState extends State<WalletPage>
         userId = userData!['sId'].toString();
       }
 
-      final uri = Uri.parse('${ApiService.baseUrl}/api/generate-palmpay-paga');
+      // Determine which endpoint to call
+      String endpoint = 'generate-palmpay-paga';
+      if (type == 'paga') {
+        endpoint = 'generate-paga-only';
+      } else if (type == 'palmpay') {
+        endpoint = 'generate-palmpay-only';
+      }
+
+      final uri = Uri.parse('${ApiService.baseUrl}/api/$endpoint');
       final response = await http.post(
         uri,
         headers: {'Content-Type': 'application/json'},
@@ -187,11 +224,12 @@ class _WalletPageState extends State<WalletPage>
           // Merge into existing userData and persist
           final updated = Map<String, dynamic>.from(userData ?? {});
           if (pagaAcct != null && pagaAcct.toString().isNotEmpty) {
-            updated['sPaga'] = pagaAcct.toString();
-            // updated['sPagaBank'] = pagaAcct.toString();
+            // Save Paga account in sAsfiyBank
+            updated['sAsfiyBank'] = pagaAcct.toString();
           }
           if (palmpayAcct != null && palmpayAcct.toString().isNotEmpty) {
-            updated['sPalmpayBank'] = palmpayAcct.toString();
+            // Save Palmpay account in sPaga
+            updated['sPaga'] = palmpayAcct.toString();
           }
           // Mark that accounts were generated in the app
           updated['sBankName'] = 'app';
@@ -202,11 +240,34 @@ class _WalletPageState extends State<WalletPage>
             userData = updated;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Accounts generated successfully')),
+          String successMsg = 'Account generated successfully';
+          if (type == 'both') {
+            successMsg = 'Both accounts generated successfully';
+          } else if (type == 'paga') {
+            successMsg = 'Paga account generated successfully';
+          } else if (type == 'palmpay') {
+            successMsg = 'Palmpay account generated successfully';
+          }
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(successMsg)));
+
+          // Send notification asynchronously (don't wait for it)
+          String notificationAccountType = '';
+          if (type == 'both') {
+            notificationAccountType = 'Palmpay and Paga';
+          } else if (type == 'paga') {
+            notificationAccountType = 'Paga';
+          } else if (type == 'palmpay') {
+            notificationAccountType = 'Palmpay';
+          }
+          _sendAccountGenerationNotification(
+            userId ?? '',
+            notificationAccountType,
           );
         } else {
-          final msg = data['message'] ?? 'Failed to generate accounts';
+          final msg = data['message'] ?? 'Failed to generate account';
           throw Exception(msg);
         }
       } else {
@@ -221,7 +282,7 @@ class _WalletPageState extends State<WalletPage>
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error generating accounts: ${e.toString()}')),
+        SnackBar(content: Text('Error generating account: ${e.toString()}')),
       );
     } finally {
       if (mounted) {
@@ -250,9 +311,9 @@ class _WalletPageState extends State<WalletPage>
     final isAppGenerated = userData?['sBankName'] == 'app';
 
     if (isAppGenerated) {
-      // Accounts generated in app: sPaga as Paga, sPalmpayBank as Palmpay
-      add('sPalmpayBank', 'Palmpay');
-      add('sPaga', 'Paga');
+      // Accounts generated in app: sPaga as Palmpay, sAsfiyBank as Paga
+      add('sPaga', 'Palmpay');
+      add('sAsfiyBank', 'Paga');
     } else {
       // Accounts from other sources: sPaga as Palmpay, sAsfiyBank as Paga
       add('sPaga', 'Palmpay');
@@ -266,6 +327,17 @@ class _WalletPageState extends State<WalletPage>
   Widget build(BuildContext context) {
     final accounts = _collectAccounts();
     final bool bothMissing = accounts.isEmpty;
+
+    // Check which accounts are missing
+    final bool hasPalmpay =
+        userData?['sPaga'] != null &&
+        userData!['sPaga'].toString().trim().isNotEmpty;
+    final bool hasPaga =
+        userData?['sAsfiyBank'] != null &&
+        userData!['sAsfiyBank'].toString().trim().isNotEmpty;
+    final bool palmpayMissing = !hasPalmpay;
+    final bool pagaMissing = !hasPaga;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
@@ -322,8 +394,9 @@ class _WalletPageState extends State<WalletPage>
                       SizedBox(height: getResponsiveSize(context, 12)),
                     ],
 
-                    // Show generate button when no accounts exist
+                    // Show generate buttons based on what's available
                     if (bothMissing)
+                      // Both missing: show button to generate both
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: getResponsiveSize(context, 0),
@@ -331,7 +404,9 @@ class _WalletPageState extends State<WalletPage>
                         child: SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
-                            onPressed: _isGenerating ? null : _generateAccounts,
+                            onPressed: _isGenerating
+                                ? null
+                                : () => _generateAccounts(type: 'both'),
                             icon: _isGenerating
                                 ? SizedBox(
                                     width: getResponsiveSize(context, 16),
@@ -363,6 +438,113 @@ class _WalletPageState extends State<WalletPage>
                             ),
                           ),
                         ),
+                      )
+                    else if (palmpayMissing || pagaMissing)
+                      // One or both missing: show separate buttons
+                      Column(
+                        children: [
+                          if (palmpayMissing)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                bottom: getResponsiveSize(context, 12),
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: _isGenerating
+                                      ? null
+                                      : () =>
+                                            _generateAccounts(type: 'palmpay'),
+                                  icon: _isGenerating
+                                      ? SizedBox(
+                                          width: getResponsiveSize(context, 16),
+                                          height: getResponsiveSize(
+                                            context,
+                                            16,
+                                          ),
+                                          child:
+                                              const CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
+                                        )
+                                      : const Icon(Icons.vpn_key_outlined),
+                                  label: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: getResponsiveSize(context, 12),
+                                    ),
+                                    child: Text(
+                                      _isGenerating
+                                          ? 'Generating...'
+                                          : 'Generate Palmpay Account',
+                                      style: TextStyle(
+                                        fontSize: getResponsiveSize(
+                                          context,
+                                          14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFce4323),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (pagaMissing)
+                            Padding(
+                              padding: EdgeInsets.only(
+                                bottom: getResponsiveSize(context, 12),
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: _isGenerating
+                                      ? null
+                                      : () => _generateAccounts(type: 'paga'),
+                                  icon: _isGenerating
+                                      ? SizedBox(
+                                          width: getResponsiveSize(context, 16),
+                                          height: getResponsiveSize(
+                                            context,
+                                            16,
+                                          ),
+                                          child:
+                                              const CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
+                                        )
+                                      : const Icon(Icons.vpn_key_outlined),
+                                  label: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: getResponsiveSize(context, 12),
+                                    ),
+                                    child: Text(
+                                      _isGenerating
+                                          ? 'Generating...'
+                                          : 'Generate Paga Account',
+                                      style: TextStyle(
+                                        fontSize: getResponsiveSize(
+                                          context,
+                                          14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFce4323),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     SizedBox(height: getResponsiveSize(context, 24)),
                     // 'Pay Manually' button removed by request

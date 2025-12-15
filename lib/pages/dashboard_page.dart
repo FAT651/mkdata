@@ -914,7 +914,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Colors.green,
                       () async {
                         final Uri whatsappUrl = Uri.parse(
-                          'https://wa.me/2348022412220',
+                          'https://wa.me/+2349064349466',
                         );
                         if (await canLaunchUrl(whatsappUrl)) {
                           await launchUrl(
@@ -932,7 +932,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       const Color(0xFF0A5ED7),
                       () async {
                         final Uri channelUrl = Uri.parse(
-                          'https://chat.whatsapp.com/Ixd8nVwcNttCfCXTfo9azZ?mode=hqrc',
+                          'https://wa.me/+2349064349466',
                         );
                         if (await canLaunchUrl(channelUrl)) {
                           await launchUrl(
