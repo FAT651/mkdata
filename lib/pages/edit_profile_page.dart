@@ -89,13 +89,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
         setState(() {
           _selectedImagePath = pickedFile.path;
         });
+      } else {
+        // User cancelled the picker
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Image selection cancelled'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
       }
     } catch (e) {
       print('Error picking image: $e');
       if (mounted) {
+        String errorMessage = 'Error picking image: $e';
+        if (e.toString().contains('permission')) {
+          errorMessage =
+              'Permission denied: Please allow access to photos in Settings';
+        }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+        ).showSnackBar(SnackBar(content: Text(errorMessage)));
       }
     } finally {
       setState(() => _isLoadingImage = false);

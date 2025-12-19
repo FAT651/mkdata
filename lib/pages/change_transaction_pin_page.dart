@@ -39,12 +39,6 @@ class _ChangeTransactionPinPageState extends State<ChangeTransactionPinPage> {
       final prefs = await SharedPreferences.getInstance();
       String? userId = prefs.getString('user_id');
 
-      if (userId == null) {
-        await prefs.setString('login_pin', _enteredPin);
-        if (mounted) Navigator.of(context).pop(true);
-        return;
-      }
-
       final api = ApiService();
       final res = await api.post('update-pin', {
         'user_id': userId,

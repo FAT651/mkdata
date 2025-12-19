@@ -334,6 +334,21 @@ function sendTransactionNotification($userId, $transactionType, $transactionData
                 $body = '₦' . number_format($amount) . ' for ' . $quantity . ' exam PIN(s)';
             }
             break;
+
+        case 'airtime2cash':
+            // Notification for airtime to cash conversions
+            $status = $transactionData['status'] ?? 'success';
+            $amount = $transactionData['amount'] ?? '0';
+            $reference = $transactionData['reference'] ?? 'Unknown';
+            
+            if ($status === 'error' || $status === 'failed') {
+                $title = '❌ Airtime Conversion Failed';
+                $body = 'Unable to convert ₦' . number_format($amount) . ' airtime to cash. Please try again. Ref: ' . $reference;
+            } else {
+                $title = '💰 Airtime Conversion Processing';
+                $body = '₦' . number_format($amount) . ' airtime conversion initiated. Wallet will be credited shortly. Ref: ' . $reference;
+            }
+            break;
             
         default:
             $title = '✓ Transaction Complete';

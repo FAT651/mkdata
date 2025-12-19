@@ -50,13 +50,6 @@ class _PinSetupPageState extends State<PinSetupPage> {
       // Determine user id from saved user_data or separate key
       String? userId = prefs.getString('user_id');
 
-      // If still null, we can't call the API reliably; save locally only.
-      if (userId == null) {
-        await prefs.setString('login_pin', _enteredPin);
-        if (mounted) Navigator.of(context).pushReplacementNamed('/dashboard');
-        return;
-      }
-
       final res = await api.post('update-pin', {
         'user_id': userId,
         'pin': _enteredPin,

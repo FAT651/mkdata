@@ -58,5 +58,27 @@
 		<!-- Keep method swizzling enabled for Firebase (do not set to NO) -->
 		<key>FirebaseAppDelegateProxyEnabled</key>
 		<true/>
+
+		<!-- Biometric Authentication Permissions -->
+		<key>NSFaceIDUsageDescription</key>
+		<string>We need Face ID to securely authenticate your transactions and protect your account</string>
+		<key>NSLocalizedDescription</key>
+		<string>Biometric authentication allows you to securely access your account</string>
+
+		<!-- Photo Library and Camera Permissions -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We need access to your photo library to set your profile picture</string>
+		<key>NSCameraUsageDescription</key>
+		<string>We need camera access to capture your profile photo</string>
+
+		<!-- URL Scheme Whitelist for url_launcher -->
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>https</string>
+			<string>http</string>
+			<string>mailto</string>
+			<string>whatsapp</string>
+			<string>tel</string>
+		</array>
 	</dict>
 </plist>

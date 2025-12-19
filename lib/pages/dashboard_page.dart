@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:marquee/marquee.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'wallet_page.dart';
-import 'invite_page.dart';
+import 'airtime2cash_page.dart';
 import 'airtime_page.dart';
 import 'data_page.dart';
 import 'cable_page.dart';
@@ -913,14 +913,31 @@ class _DashboardPageState extends State<DashboardPage> {
                       Icons.chat,
                       Colors.green,
                       () async {
-                        final Uri whatsappUrl = Uri.parse(
-                          'https://wa.me/+2349064349466',
-                        );
-                        if (await canLaunchUrl(whatsappUrl)) {
-                          await launchUrl(
-                            whatsappUrl,
-                            mode: LaunchMode.externalApplication,
+                        try {
+                          final Uri whatsappUrl = Uri.parse(
+                            'https://wa.me/+2349064349466',
                           );
+                          if (await canLaunchUrl(whatsappUrl)) {
+                            await launchUrl(
+                              whatsappUrl,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('WhatsApp not available'),
+                                ),
+                              );
+                            }
+                          }
+                        } catch (e) {
+                          print('Error launching WhatsApp: $e');
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: ${e.toString()}')),
+                            );
+                          }
                         }
                         setState(() => _expandFloatingMenu = false);
                       },
@@ -931,14 +948,31 @@ class _DashboardPageState extends State<DashboardPage> {
                       Icons.tv,
                       const Color(0xFF0A5ED7),
                       () async {
-                        final Uri channelUrl = Uri.parse(
-                          'https://wa.me/+2349064349466',
-                        );
-                        if (await canLaunchUrl(channelUrl)) {
-                          await launchUrl(
-                            channelUrl,
-                            mode: LaunchMode.externalApplication,
+                        try {
+                          final Uri channelUrl = Uri.parse(
+                            'https://wa.me/+2349064349466',
                           );
+                          if (await canLaunchUrl(channelUrl)) {
+                            await launchUrl(
+                              channelUrl,
+                              mode: LaunchMode.externalApplication,
+                            );
+                          } else {
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Channel not available'),
+                                ),
+                              );
+                            }
+                          }
+                        } catch (e) {
+                          print('Error launching channel: $e');
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: ${e.toString()}')),
+                            );
+                          }
                         }
                         setState(() => _expandFloatingMenu = false);
                       },
@@ -1612,10 +1646,10 @@ class _DashboardPageState extends State<DashboardPage> {
                             () => _pushAndRefresh(const ElectricityPage()),
                           ),
                           _buildFeatureButton(
-                            'Refer & Earn',
-                            Icons.card_giftcard,
+                            'Airtime 2 Cash',
+                            Icons.currency_exchange,
                             const Color(0xFFce4323),
-                            () => _pushAndRefresh(const InvitePage()),
+                            () => _pushAndRefresh(const Airtime2CashPage()),
                           ),
                           _buildFeatureButton(
                             'Cable',

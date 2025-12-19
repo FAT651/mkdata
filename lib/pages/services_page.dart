@@ -12,10 +12,23 @@ import 'package:url_launcher/url_launcher.dart';
 class ServicesPage extends StatelessWidget {
   const ServicesPage({super.key});
 
-  Future<void> _launchURL(String urlString) async {
-    final Uri url = Uri.parse(urlString);
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch \$urlString');
+  Future<void> _launchURL(String urlString, BuildContext context) async {
+    try {
+      final Uri url = Uri.parse(urlString);
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not launch $urlString')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      }
     }
   }
 
@@ -176,7 +189,7 @@ class ServicesPage extends StatelessWidget {
                     'Website',
                     Icons.language,
                     const Color(0xFFce4323),
-                    () => _launchURL('https://binalionedata.com.ng/'),
+                    () => _launchURL('https://binalionedata.com.ng/', context),
                   ),
                   _buildServiceCard(
                     context,

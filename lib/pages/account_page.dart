@@ -66,7 +66,7 @@ class _AccountPageState extends State<AccountPage> {
   Future<void> _loadBiometricSettings() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final isEnabled = prefs.getBool('biometric_enabled') ?? true;
+      final isEnabled = prefs.getBool('biometric_enabled') ?? false;
       setState(() {
         _isBiometricEnabled = isEnabled;
       });

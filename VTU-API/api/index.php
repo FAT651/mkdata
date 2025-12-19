@@ -12,8 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 use Binali\Models\User;
 use Binali\Config\Database;
-use PDO;
-use PDOException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 
@@ -146,23 +144,37 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 error_log("Original Request URI: " . $uri);
 error_log("Request Method: " . $requestMethod);
 
-// Extract the endpoint from the URI
+// Extract the endpoint from the URI (raw path after /api/)
 $uriParts = explode('/api/', $uri, 2);
-$endpoint = isset($uriParts[1]) ? trim($uriParts[1], '/') : '';
+$rawEndpoint = isset($uriParts[1]) ? trim($uriParts[1], '/') : '';
 
 // Debug logging
-error_log("Extracted endpoint: " . $endpoint);
+error_log("Extracted endpoint: " . $rawEndpoint);
 
-// Split for additional parameters if needed
-$uriSegments = explode('/', $endpoint);
+// Split for additional parameters from the raw extracted endpoint
+$uriSegments = explode('/', $rawEndpoint);
 
 // Use the first segment as the endpoint
 $endpoint = $uriSegments[0] ?? '';
 $subEndpoint = $uriSegments[1] ?? null;
 $id = $uriSegments[2] ?? null;
 
+// Backwards-compatibility: if the upstream provided full path as endpoint (rare), normalize using rawEndpoint
+if (in_array($rawEndpoint, ['airtime2cash/verify', 'airtime2cash/convert'])) {
+    $parts = explode('/', $rawEndpoint, 2);
+    $endpoint = 'airtime2cash';
+    $subEndpoint = $parts[1] ?? null;
+}
+
 // Debug logging
+error_log("=== ROUTER DEBUG START ===");
 error_log("Processing endpoint: " . $endpoint);
+// Additional diagnostics to catch hidden characters or encoding issues
+error_log("Endpoint raw: '" . $endpoint . "' | length: " . strlen($endpoint));
+$endpoint_bytes = array_map(function($c){ return ord($c); }, str_split($endpoint));
+error_log("Endpoint bytes: " . implode(',', $endpoint_bytes));
+error_log("subEndpoint raw: '" . ($subEndpoint ?? '') . "' | length: " . strlen($subEndpoint ?? ''));
+error_log("=== ROUTER DEBUG END ===");
 
 // Initialize response array
 $response = [
@@ -185,6 +197,9 @@ if ($endpoint === 'device') {
         exit();
     }
 }
+
+// Final debug before switch
+error_log("About to enter switch with endpoint: '$endpoint'");
 
 try {
     switch ($endpoint) {
@@ -3126,6 +3141,551 @@ try {
             }
             break;
 
+        case 'a2c-settings':
+            // Get A2C settings for all networks
+            try {
+                $db = new Database();
+                $settings = $db->query("SELECT network, phone_number, whatsapp_number, contact_phone, rate, min_amount, max_amount FROM a2c_settings WHERE is_active = 1");
+                
+                if (!$settings) {
+                    throw new Exception('Failed to load A2C settings');
+                }
+
+                // Format response
+                $formatted = [];
+                foreach ($settings as $setting) {
+                    $formatted[$setting['network']] = [
+                        'phone_number' => $setting['phone_number'],
+                        'whatsapp_number' => $setting['whatsapp_number'],
+                        'contact_phone' => $setting['contact_phone'],
+                        'rate' => (float)$setting['rate'],
+                        'min_amount' => (float)$setting['min_amount'],
+                        'max_amount' => (float)$setting['max_amount'],
+                    ];
+                }
+
+                $response['status'] = 'success';
+                $response['message'] = 'A2C settings retrieved';
+                $response['data'] = $formatted;
+            } catch (Exception $e) {
+                error_log("Error in a2c-settings: " . $e->getMessage());
+                http_response_code(500);
+                $response['status'] = 'error';
+                $response['message'] = $e->getMessage();
+            }
+            break;
+
+        case 'a2c-submit':
+            // Submit airtime2cash request
+            if ($requestMethod !== 'POST') {
+                throw new Exception('Method not allowed');
+            }
+
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            $required = ['user_id', 'network', 'sender_phone', 'airtime_amount', 'cash_amount'];
+            foreach ($required as $field) {
+                if (!isset($data[$field])) {
+                    throw new Exception("Missing required field: $field");
+                }
+            }
+
+            try {
+                $db = new Database();
+
+                // Validate network exists in settings
+                $networkCheck = $db->query(
+                    "SELECT id FROM a2c_settings WHERE network = ? AND is_active = 1",
+                    [$data['network']]
+                );
+
+                if (!$networkCheck) {
+                    throw new Exception('Invalid network selected');
+                }
+
+                // Validate amount
+                $setting = $db->query(
+                    "SELECT min_amount, max_amount FROM a2c_settings WHERE network = ?",
+                    [$data['network']]
+                );
+
+                if ($data['airtime_amount'] < $setting[0]['min_amount'] || 
+                    $data['airtime_amount'] > $setting[0]['max_amount']) {
+                    throw new Exception('Amount is outside allowed range');
+                }
+
+                // Generate reference
+                $reference = 'A2C-' . time() . '-' . $data['user_id'];
+
+                // Insert request
+                $db->query(
+                    "INSERT INTO a2c_requests (user_id, network, sender_phone, airtime_amount, cash_amount, reference, status) 
+                     VALUES (?, ?, ?, ?, ?, ?, 'pending')",
+                    [
+                        $data['user_id'],
+                        $data['network'],
+                        $data['sender_phone'],
+                        $data['airtime_amount'],
+                        $data['cash_amount'],
+                        $reference
+                    ]
+                );
+
+                $response['status'] = 'success';
+                $response['message'] = 'Request submitted successfully';
+                $response['data'] = [
+                    'reference' => $reference,
+                    'airtime_amount' => $data['airtime_amount'],
+                    'cash_amount' => $data['cash_amount'],
+                    'status' => 'pending'
+                ];
+            } catch (Exception $e) {
+                error_log("Error in a2c-submit: " . $e->getMessage());
+                http_response_code(400);
+                $response['status'] = 'error';
+                $response['message'] = $e->getMessage();
+            }
+            break;
+
+        case 'a2c-requests':
+            // Get pending requests for current user
+            try {
+                $userId = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+                
+                if (!$userId) {
+                    throw new Exception('user_id is required');
+                }
+
+                $db = new Database();
+                $requests = $db->query(
+                    "SELECT id, network, sender_phone, airtime_amount, cash_amount, status, reference, created_at 
+                     FROM a2c_requests WHERE user_id = ? ORDER BY created_at DESC",
+                    [$userId]
+                );
+
+                $response['status'] = 'success';
+                $response['message'] = 'Requests retrieved';
+                $response['data'] = $requests ?? [];
+            } catch (Exception $e) {
+                error_log("Error in a2c-requests: " . $e->getMessage());
+                http_response_code(400);
+                $response['status'] = 'error';
+                $response['message'] = $e->getMessage();
+            }
+            break;
+
+        case 'a2c-approve':
+            // Admin endpoint to approve pending request and credit user
+            if ($requestMethod !== 'POST') {
+                throw new Exception('Method not allowed');
+            }
+
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            $required = ['request_id', 'admin_id', 'approval_status'];
+            foreach ($required as $field) {
+                if (!isset($data[$field])) {
+                    throw new Exception("Missing required field: $field");
+                }
+            }
+
+            if (!in_array($data['approval_status'], ['approved', 'rejected'])) {
+                throw new Exception('Invalid approval_status. Must be "approved" or "rejected"');
+            }
+
+            try {
+                $db = new Database();
+                $db->beginTransaction();
+
+                // Get request details
+                $request = $db->query(
+                    "SELECT user_id, cash_amount, status FROM a2c_requests WHERE id = ?",
+                    [$data['request_id']]
+                );
+
+                if (!$request) {
+                    throw new Exception('Request not found');
+                }
+
+                if ($request[0]['status'] !== 'pending') {
+                    throw new Exception('Request is not pending');
+                }
+
+                // Update request status
+                $notes = $data['admin_notes'] ?? '';
+                $db->query(
+                    "UPDATE a2c_requests SET status = ?, admin_notes = ?, updated_at = NOW() WHERE id = ?",
+                    [$data['approval_status'], $notes, $data['request_id']]
+                );
+
+                // If approved, credit user wallet
+                if ($data['approval_status'] === 'approved') {
+                    // Add to wallet
+                    $db->query(
+                        "UPDATE subscribers SET sWallet = sWallet + ? WHERE sId = ?",
+                        [$request[0]['cash_amount'], $request[0]['user_id']]
+                    );
+
+                    // Log transaction
+                    $db->query(
+                        "INSERT INTO transactions (sId, transref, servicename, servicedesc, amount, status) 
+                         VALUES (?, ?, ?, ?, ?, ?)",
+                        [
+                            $request[0]['user_id'],
+                            'A2C-APPROVED-' . $data['request_id'] . '-' . time(),
+                            'Airtime2Cash',
+                            'Airtime to Cash - Admin Approved',
+                            $request[0]['cash_amount'],
+                            'success'
+                        ]
+                    );
+                }
+
+                $db->commit();
+
+                $response['status'] = 'success';
+                $response['message'] = 'Request ' . $data['approval_status'] . ' successfully';
+                $response['data'] = [
+                    'request_id' => $data['request_id'],
+                    'approval_status' => $data['approval_status'],
+                    'cash_amount' => $request[0]['cash_amount']
+                ];
+            } catch (Exception $e) {
+                error_log("Error in a2c-approve: " . $e->getMessage());
+                try {
+                    $db->rollBack();
+                } catch (Exception $rollbackError) {
+                    error_log("Rollback failed: " . $rollbackError->getMessage());
+                }
+                http_response_code(400);
+                $response['status'] = 'error';
+                $response['message'] = $e->getMessage();
+            }
+            break;
+
+        case 'airtime2cash':
+            if ($subEndpoint === 'verify') {
+                if ($requestMethod !== 'POST') {
+                    throw new Exception('Method not allowed');
+                }
+
+                $data = json_decode(file_get_contents("php://input"), true);
+                if (!isset($data['user_id']) || !isset($data['network'])) {
+                    throw new Exception('Missing required parameters: user_id, network');
+                }
+
+                // Validate network
+                $valid_networks = ['mtn', 'airtel', 'glo', '9mobile'];
+                if (!in_array(strtolower($data['network']), $valid_networks)) {
+                    throw new Exception('Invalid network: ' . $data['network']);
+                }
+
+                // Initialize database helper (guarded)
+                try {
+                    $db = new Database();
+                } catch (Exception $e) {
+                    // Log full DB error for debugging but return a generic message to clients
+                    error_log("Database connection failed in airtime2cash/verify: " . $e->getMessage());
+                    http_response_code(503);
+                    $response['status'] = 'error';
+                    $response['message'] = 'Service temporarily unavailable';
+                    break;
+                }
+
+                try {
+                    // Get API configurations
+                    $configs = [];
+                    $configResult = $db->query("SELECT name, value FROM apiconfigs WHERE name IN ('a2cHost', 'a2cApikey')");
+                    
+                    if (!$configResult) {
+                        throw new Exception('Failed to load API configurations from database');
+                    }
+
+                    foreach ($configResult as $config) {
+                        $configs[$config['name']] = $config['value'];
+                    }
+
+                    // Check required configurations
+                    if (!isset($configs['a2cHost']) || !isset($configs['a2cApikey'])) {
+                        throw new Exception('Missing VTU Africa API configuration (a2cHost or a2cApikey)');
+                    }
+
+                    $a2c_host = $configs['a2cHost'];
+                    $a2c_api_key = $configs['a2cApikey'];
+
+                    // Build verification request URL
+                    $verify_url = rtrim($a2c_host, '/') . '/portal/api/merchant-verify/';
+                    
+                    // Prepare query parameters
+                    $verify_params = [
+                        'apikey' => $a2c_api_key,
+                        'serviceName' => 'Airtime2Cash',
+                        'network' => $data['network'],
+                    ];
+
+                    // Build full URL with query string
+                    $verify_url_with_params = $verify_url . '?' . http_build_query($verify_params);
+
+                    // Make verification request to VTU Africa
+                    $curl = curl_init();
+                    curl_setopt_array($curl, [
+                        CURLOPT_URL => $verify_url_with_params,
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_TIMEOUT => 15,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'GET',
+                        CURLOPT_HTTPHEADER => [
+                            'Content-Type: application/json',
+                        ],
+                    ]);
+
+                    $vtu_response = curl_exec($curl);
+                    $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                    $curl_error = curl_error($curl);
+                    curl_close($curl);
+
+                    if ($curl_error) {
+                        throw new Exception('Verification request failed: ' . $curl_error);
+                    }
+
+                    if ($http_code !== 200) {
+                        error_log("VTU Africa verification failed with HTTP {$http_code}: {$vtu_response}");
+                        throw new Exception('VTU Africa verification service returned error: HTTP ' . $http_code);
+                    }
+
+                    $vtu_parsed = json_decode($vtu_response, true);
+
+                    if (!$vtu_parsed) {
+                        throw new Exception('Invalid response from VTU Africa verification service');
+                    }
+
+                    // Check VTU Africa response code
+                    if (($vtu_parsed['code'] ?? null) !== 101) {
+                        throw new Exception($vtu_parsed['description']['Status'] ?? 'Verification failed');
+                    }
+
+                    // Validate response structure
+                    $description = $vtu_parsed['description'] ?? [];
+                    $status = $description['Status'] ?? null;
+                    $phone_number = $description['Phone_Number'] ?? null;
+
+                    if ($status !== 'Completed' || !$phone_number) {
+                        throw new Exception('Service not available for ' . $data['network']);
+                    }
+
+                    // Success response
+                    $response['status'] = 'success';
+                    $response['data'] = [
+                        'status' => $status,
+                        'phone_number' => $phone_number,
+                        'network' => $data['network'],
+                    ];
+                    http_response_code(200);
+
+                } catch (Exception $e) {
+                    error_log("Error in airtime2cash/verify: " . $e->getMessage());
+                    http_response_code(400);
+                    $response['status'] = 'error';
+                    $response['message'] = $e->getMessage();
+                }
+
+            } elseif ($subEndpoint === 'convert') {
+            if ($requestMethod !== 'POST') {
+                throw new Exception('Method not allowed');
+            }
+
+            $data = json_decode(file_get_contents("php://input"), true);
+            
+            $user_id = $data['user_id'] ?? null;
+            $user_phone = $data['user_phone'] ?? null;
+            $network = $data['network'] ?? null;
+            $amount = $data['amount'] ?? null;
+            $reference = $data['reference'] ?? null;
+            $site_phone = $data['site_phone'] ?? null;
+
+            // Validate inputs
+            $required = ['user_id', 'user_phone', 'network', 'amount', 'reference', 'site_phone'];
+            foreach ($required as $field) {
+                if (!$$field) {
+                    throw new Exception("Missing required parameter: {$field}");
+                }
+            }
+
+            // Validate amount is numeric and positive
+            if (!is_numeric($amount) || $amount <= 0) {
+                throw new Exception('Amount must be a positive number');
+            }
+
+            $amount = floatval($amount);
+
+            // Validate network
+            $valid_networks = ['mtn', 'airtel', 'glo', '9mobile'];
+            if (!in_array(strtolower($network), $valid_networks)) {
+                throw new Exception('Invalid network: ' . $network);
+            }
+
+                // Initialize database helper (guarded)
+                try {
+                    $db = new Database();
+                } catch (Exception $e) {
+                    // Log full DB error for debugging but return a generic message to clients
+                    error_log("Database connection failed in airtime2cash/convert: " . $e->getMessage());
+                    http_response_code(503);
+                    $response['status'] = 'error';
+                    $response['message'] = 'Service temporarily unavailable';
+                    break;
+                }
+
+                try {
+                    // Get API configurations
+                    $configs = [];
+                $configResult = $db->query("SELECT name, value FROM apiconfigs WHERE name IN ('a2cHost', 'a2cApikey')");
+                
+                if (!$configResult) {
+                    throw new Exception('Failed to load API configurations');
+                }
+
+                foreach ($configResult as $config) {
+                    $configs[$config['name']] = $config['value'];
+                }
+
+                if (!isset($configs['a2cHost']) || !isset($configs['a2cApikey'])) {
+                    throw new Exception('Missing VTU Africa API configuration');
+                }
+
+                $a2c_host = $configs['a2cHost'];
+                $a2c_api_key = $configs['a2cApikey'];
+
+                // Begin transaction
+                $db->beginTransaction();
+
+                // Store transaction BEFORE calling VTU Africa
+                $transactionData = [
+                    'user_id' => $user_id,
+                    'reference' => $reference,
+                    'service' => 'Airtime2Cash',
+                    'network' => $network,
+                    'amount' => $amount,
+                    'status' => 'processing',
+                    'raw_request' => json_encode($data),
+                ];
+
+                // Get current balance
+                $userResult = $db->query("SELECT sWallet FROM subscribers WHERE sId = ?", [$user_id]);
+                if (!$userResult) {
+                    throw new Exception('User not found');
+                }
+
+                $oldBalance = floatval($userResult[0]['sWallet'] ?? 0);
+                $newBalance = $oldBalance;
+                $profit = 0;
+
+                // Insert transaction record
+                $insertQuery = "
+                    INSERT INTO transactions (sId, transref, servicename, servicedesc, amount, status, oldbal, newbal, profit, date, api_response)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)
+                ";
+
+                $db->execute($insertQuery, [
+                    $user_id,
+                    $reference,
+                    'Airtime 2 Cash',
+                    'Airtime conversion - Pending',
+                    $amount,
+                    0, // status: 0 = processing/initiated
+                    $oldBalance,
+                    $newBalance,
+                    $profit,
+                    json_encode($transactionData),
+                ]);
+
+                // Commit transaction to ensure data is saved before making external request
+                $db->commit();
+
+                // Now make the conversion request to VTU Africa
+                $convert_url = rtrim($a2c_host, '/') . '/portal/api/airtime-cash/';
+
+                // Prepare parameters for conversion
+                $convert_params = [
+                    'apikey' => $a2c_api_key,
+                    'network' => $network,
+                    'sender' => $user_id,
+                    'sendernumber' => $user_phone,
+                    'amount' => intval($amount),
+                    'ref' => $reference,
+                    'sitephone' => $site_phone,
+                    'webhookURL' => 'https://api.mkdata.com.ng/api/webhooks/a2c',
+                ];
+
+                // Build full URL with query string
+                $convert_url_with_params = $convert_url . '?' . http_build_query($convert_params);
+
+                $curl = curl_init();
+                curl_setopt_array($curl, [
+                    CURLOPT_URL => $convert_url_with_params,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT => 15,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'GET',
+                    CURLOPT_HTTPHEADER => [
+                        'Content-Type: application/json',
+                    ],
+                ]);
+
+                $vtu_response = curl_exec($curl);
+                $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                $curl_error = curl_error($curl);
+                curl_close($curl);
+
+                if ($curl_error) {
+                    throw new Exception('Conversion request failed: ' . $curl_error);
+                }
+
+                $vtu_parsed = json_decode($vtu_response, true);
+
+                // Store the response for debugging
+                $db->execute(
+                    "UPDATE transactions SET api_response = ? WHERE transref = ?",
+                    [json_encode($vtu_parsed), $reference]
+                );
+
+                if ($http_code !== 200) {
+                    error_log("VTU Africa conversion failed with HTTP {$http_code}: {$vtu_response}");
+                    throw new Exception('VTU Africa conversion service returned error');
+                }
+
+                if (!$vtu_parsed) {
+                    throw new Exception('Invalid response from VTU Africa');
+                }
+
+                // Return success
+                $response['status'] = 'success';
+                $response['message'] = 'Airtime conversion request submitted successfully';
+                $response['data'] = [
+                    'reference' => $reference,
+                    'amount' => $amount,
+                    'network' => $network,
+                ];
+                http_response_code(200);
+
+            } catch (Exception $e) {
+                error_log("Error in airtime2cash/convert: " . $e->getMessage());
+                try {
+                    $db->rollBack();
+                } catch (Exception $rollbackError) {
+                    error_log("Rollback failed: " . $rollbackError->getMessage());
+                }
+                http_response_code(400);
+                $response['status'] = 'error';
+                $response['message'] = $e->getMessage();
+            }
+            } else {
+                http_response_code(404);
+                $response['status'] = 'error';
+                $response['message'] = 'Unknown airtime2cash endpoint: ' . ($subEndpoint ?? 'none');
+            }
+            break;
+
         default:
             error_log("No matching endpoint found for: " . $endpoint);
             http_response_code(404);
@@ -3145,6 +3705,14 @@ if (!isset($response) || !is_array($response)) {
     error_log("CRITICAL: Response not set or invalid type");
     $response = ['status' => 'error', 'message' => 'Internal server error'];
 }
+
+// Add helpful debug info to response for quick diagnostics (temporary)
+$response['__debug'] = [
+    'uri' => $uri ?? null,
+    'endpoint' => $endpoint ?? null,
+    'subEndpoint' => $subEndpoint ?? null,
+    'method' => $requestMethod ?? null,
+];
 
 error_log("Final response: " . json_encode($response));
 echo json_encode($response);

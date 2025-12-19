@@ -187,6 +187,26 @@ class _AirtimePageState extends State<AirtimePage> {
       }
     } catch (e) {
       print('Error during biometric authentication: $e');
+      // Handle specific error types
+      if (e.toString().contains('NotAvailable') ||
+          e.toString().contains('NOT_AVAILABLE')) {
+        showNetworkErrorSnackBar(
+          context,
+          'Biometric authentication is not available',
+        );
+      } else if (e.toString().contains('PermissionDenied') ||
+          e.toString().contains('PERMISSION_DENIED')) {
+        showNetworkErrorSnackBar(
+          context,
+          'Biometric permission denied. Please enable in Settings',
+        );
+      } else if (e.toString().contains('NotEnrolled') ||
+          e.toString().contains('NOT_ENROLLED')) {
+        showNetworkErrorSnackBar(
+          context,
+          'No biometric data enrolled on this device',
+        );
+      }
     }
     return null;
   }

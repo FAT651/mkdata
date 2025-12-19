@@ -5,24 +5,57 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class ContactPage extends StatelessWidget {
   const ContactPage({super.key});
 
-  Future<void> _launchURL(String urlString) async {
-    final Uri url = Uri.parse(urlString);
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $urlString');
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _launchURL(String urlString, BuildContext context) async {
+    try {
+      final Uri url = Uri.parse(urlString);
+      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+        if (context.mounted) {
+          _showError(context, 'Could not launch $urlString');
+        }
+      }
+    } catch (e) {
+      print('Error launching URL: $e');
+      if (context.mounted) {
+        _showError(context, 'Error: ${e.toString()}');
+      }
     }
   }
 
-  Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $uri');
+  Future<void> _makePhoneCall(String phoneNumber, BuildContext context) async {
+    try {
+      final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
+      if (!await launchUrl(uri)) {
+        if (context.mounted) {
+          _showError(context, 'Could not make phone call');
+        }
+      }
+    } catch (e) {
+      print('Error making phone call: $e');
+      if (context.mounted) {
+        _showError(context, 'Error: ${e.toString()}');
+      }
     }
   }
 
-  Future<void> _sendEmail(String email) async {
-    final Uri uri = Uri(scheme: 'mailto', path: email);
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $uri');
+  Future<void> _sendEmail(String email, BuildContext context) async {
+    try {
+      final Uri uri = Uri(scheme: 'mailto', path: email);
+      if (!await launchUrl(uri)) {
+        if (context.mounted) {
+          _showError(context, 'Could not send email');
+        }
+      }
+    } catch (e) {
+      print('Error sending email: $e');
+      if (context.mounted) {
+        _showError(context, 'Error: ${e.toString()}');
+      }
     }
   }
 
@@ -151,7 +184,8 @@ class ContactPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           TextButton.icon(
-                            onPressed: () => _sendEmail('mkdata0@gmail.com'),
+                            onPressed: () =>
+                                _sendEmail('mkdata0@gmail.com', context),
                             icon: const Icon(
                               Icons.email,
                               color: Color(0xFFce4323),
@@ -162,7 +196,8 @@ class ContactPage extends StatelessWidget {
                             ),
                           ),
                           TextButton.icon(
-                            onPressed: () => _makePhoneCall('+2349064349466'),
+                            onPressed: () =>
+                                _makePhoneCall('+2349064349466', context),
                             icon: const Icon(
                               Icons.phone,
                               color: Color(0xFFce4323),
@@ -173,8 +208,10 @@ class ContactPage extends StatelessWidget {
                             ),
                           ),
                           TextButton.icon(
-                            onPressed: () =>
-                                _launchURL('https://wa.me/+2349064349466'),
+                            onPressed: () => _launchURL(
+                              'https://wa.me/+2349064349466',
+                              context,
+                            ),
                             icon: const Icon(
                               Icons.chat,
                               color: Color(0xFFce4323),
@@ -217,7 +254,8 @@ class ContactPage extends StatelessWidget {
                             ),
                             title: const Text('Email'),
                             subtitle: const Text('mkdata@gmail.com'),
-                            onTap: () => _sendEmail('mkdata@gmail.com'),
+                            onTap: () =>
+                                _sendEmail('mkdata@gmail.com', context),
                           ),
                           const SizedBox(height: 8),
                           // Follow Us card
@@ -250,6 +288,7 @@ class ContactPage extends StatelessWidget {
                                       IconButton(
                                         onPressed: () => _launchURL(
                                           'https://wa.me/+2349064349466',
+                                          context,
                                         ),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.whatsapp,
@@ -257,8 +296,10 @@ class ContactPage extends StatelessWidget {
                                         ),
                                       ),
                                       IconButton(
-                                        onPressed: () =>
-                                            _launchURL('https://facebook.com/'),
+                                        onPressed: () => _launchURL(
+                                          'https://facebook.com/',
+                                          context,
+                                        ),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.facebook,
                                           color: Color(0xFFce4323),
@@ -267,6 +308,7 @@ class ContactPage extends StatelessWidget {
                                       IconButton(
                                         onPressed: () => _launchURL(
                                           'https://instagram.com/',
+                                          context,
                                         ),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.instagram,
@@ -274,8 +316,10 @@ class ContactPage extends StatelessWidget {
                                         ),
                                       ),
                                       IconButton(
-                                        onPressed: () =>
-                                            _launchURL('https://twitter.com/'),
+                                        onPressed: () => _launchURL(
+                                          'https://twitter.com/',
+                                          context,
+                                        ),
                                         icon: const FaIcon(
                                           FontAwesomeIcons.twitter,
                                           color: Color(0xFFce4323),
@@ -294,7 +338,8 @@ class ContactPage extends StatelessWidget {
                             ),
                             title: const Text('Phone'),
                             subtitle: const Text('+2349064349466'),
-                            onTap: () => _makePhoneCall('++2349064349466'),
+                            onTap: () =>
+                                _makePhoneCall('++2349064349466', context),
                           ),
                           ListTile(
                             leading: const CircleAvatar(
@@ -303,8 +348,10 @@ class ContactPage extends StatelessWidget {
                             ),
                             title: const Text('Live Chat'),
                             subtitle: const Text('Chat with our support team'),
-                            onTap: () =>
-                                _launchURL('https://wa.me/+2349064349466'),
+                            onTap: () => _launchURL(
+                              'https://wa.me/+2349064349466',
+                              context,
+                            ),
                           ),
                         ],
                       ),
