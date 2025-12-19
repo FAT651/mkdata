@@ -12,8 +12,6 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../vendor/autoload.php'; // For PHPMailer
 
 use Binali\Config\Database;
-use PDO;
-use PDOException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
@@ -84,7 +82,16 @@ try {
     // Check if email exists in subscribers table
     $check_query = "SELECT sId, sEmail FROM subscribers WHERE sEmail = ? LIMIT 1";
     $check_stmt = $db->prepare($check_query);
-    $check_stmt->execute([$email]);
+    
+    if (!$check_stmt) {
+        throw new Exception("Failed to prepare query");
+    }
+    
+    $execute_result = $check_stmt->execute([$email]);
+    
+    if (!$execute_result) {
+        throw new Exception("Failed to execute query");
+    }
 
     if ($check_stmt->rowCount() == 0) {
         // Don't reveal that the email doesn't exist
@@ -103,12 +110,24 @@ try {
     // Delete any existing reset tokens for this email
     $delete_query = "DELETE FROM password_resets WHERE email = ?";
     $delete_stmt = $db->prepare($delete_query);
-    $delete_stmt->execute([$email]);
+    
+    if ($delete_stmt) {
+        $delete_stmt->execute([$email]);
+    }
 
     // Insert new reset token
     $insert_query = "INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)";
     $insert_stmt = $db->prepare($insert_query);
-    $insert_stmt->execute([$email, $token, $expires_at]);
+    
+    if (!$insert_stmt) {
+        throw new Exception("Failed to prepare insert");
+    }
+    
+    $insert_result = $insert_stmt->execute([$email, $token, $expires_at]);
+    
+    if (!$insert_result) {
+        throw new Exception("Failed to insert reset token");
+    }
 
     // Record this attempt
     $_SESSION['reset_attempts'][$current_time] = 1;
@@ -119,19 +138,23 @@ try {
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host = 'mail.mkdata.com';
+        $mail->Host = 'mail.mkdata.com.ng';
         $mail->SMTPAuth = true;
-        $mail->Username = 'no-reply@mkdata.com';
+        $mail->Username = 'no-reply@mkdata.com.ng';
         $mail->Password = ']xG28YL,APm-+xbx';
 
         // Use STARTTLS for port 587
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
+        
+        // Disable debugging in production
+        $mail->SMTPDebug = 0;
+        $mail->Debugoutput = function($str, $level) {
+            // Silent - debugging disabled
+        };
 
-        $mail->setFrom('no-reply@mkdata.com', 'Binali One Data');
+        $mail->setFrom('no-reply@mkdata.com.ng', 'MK DATA');
         $mail->addAddress($email);
-
-
 
         // Content
         $mail->isHTML(true);
@@ -141,23 +164,34 @@ try {
 
         $mail->Body = "
             <html>
-            <body>
-                <h2>Password Reset Request</h2>
-                <p>We received a request to reset your password. Click the button below to set a new password:</p>
-                <p>
-                    <a href='{$reset_link}' 
-                       style='background-color: #36474F; 
-                              color: white; 
-                              padding: 10px 20px; 
-                              text-decoration: none; 
-                              border-radius: 5px;
-                              display: inline-block;'>
-                        Reset Password
-                    </a>
-                </p>
-                <p>This link will expire in 24 hours.</p>
-                <p>If you didn't request this, please ignore this email.</p>
-                <p>For security reasons, please don't share this link with anyone.</p>
+            <body style='font-family: Arial, sans-serif; background-color: #f5f5f5;'>
+                <div style='max-width: 600px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 8px;'>
+                    <div style='background-color: #ce4323; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;'>
+                        <h1 style='color: white; margin: 0;'>Password Reset Request</h1>
+                    </div>
+                    <div style='padding: 20px;'>
+                        <p style='color: #333; font-size: 16px;'>We received a request to reset your password. Click the button below to set a new password:</p>
+                        <p style='text-align: center; margin: 30px 0;'>
+                            <a href='{$reset_link}' 
+                               style='background-color: #ce4323; 
+                                      color: white; 
+                                      padding: 12px 30px; 
+                                      text-decoration: none; 
+                                      border-radius: 5px;
+                                      display: inline-block;
+                                      font-weight: bold;
+                                      font-size: 16px;'>
+                                Reset Password
+                            </a>
+                        </p>
+                        <p style='color: #666; font-size: 14px;'><strong>Note:</strong> This link will expire in 24 hours.</p>
+                        <p style='color: #666; font-size: 14px;'>If you didn't request this, please ignore this email.</p>
+                        <p style='color: #999; font-size: 12px;'><em>For security reasons, please don't share this link with anyone.</em></p>
+                    </div>
+                    <div style='background-color: #f5f5f5; padding: 15px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #ddd;'>
+                        <p style='color: #999; font-size: 12px; margin: 0;'>© 2024 MK DATA. All rights reserved.</p>
+                    </div>
+                </div>
             </body>
             </html>
         ";
@@ -172,7 +206,6 @@ try {
             "message" => "If your email is registered, you will receive reset instructions shortly."
         ]);
     } catch (Exception $e) {
-        error_log("Mail Error: " . $e->getMessage());
         http_response_code(500);
         echo json_encode([
             "status" => "error",
@@ -180,7 +213,6 @@ try {
         ]);
     }
 } catch (Exception $e) {
-    error_log("Reset Request Error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         "status" => "error",

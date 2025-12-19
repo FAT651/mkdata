@@ -16,7 +16,7 @@
         }
 
         .header {
-            background-color: #36474F;
+            background-color: #ce4323;
             padding: 1rem 0;
             text-align: center;
         }
@@ -35,7 +35,7 @@
         }
 
         h1 {
-            color: #36474F;
+            color: #ce4323;
             font-size: 24px;
             margin-bottom: 1rem;
             text-align: center;
@@ -48,7 +48,7 @@
         label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #36474F;
+            color: #ce4323;
             font-weight: 500;
         }
 
@@ -62,12 +62,12 @@
         }
 
         input:focus {
-            border-color: #36474F;
+            border-color: #ce4323;
             outline: none;
         }
 
         .error {
-            color: #dc3545;
+            color: #ce4323;
             font-size: 14px;
             margin-top: 0.5rem;
         }
@@ -75,7 +75,7 @@
         button {
             width: 100%;
             padding: 0.75rem;
-            background-color: #36474F;
+            background-color: #ce4323;
             color: white;
             border: none;
             border-radius: 4px;
@@ -86,7 +86,7 @@
         }
 
         button:hover {
-            background-color: #2c3a40;
+            background-color: #b33a1c;
         }
 
         .password-requirements {
